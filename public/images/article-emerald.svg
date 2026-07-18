@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Emerald manuscript">
+  <rect width="1200" height="675" fill="#e8f3ec"/>
+  <rect x="120" y="95" width="960" height="485" rx="36" fill="#fbfdf9" stroke="#116a45" stroke-width="10"/>
+  <path d="M260 245h680M260 335h560M260 425h420" stroke="#116a45" stroke-width="34" stroke-linecap="round" opacity=".78"/>
+  <circle cx="930" cy="205" r="58" fill="#b58a2b" opacity=".75"/>
+</svg>

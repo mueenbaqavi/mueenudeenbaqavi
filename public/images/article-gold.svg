@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Gold and green arch">
+  <rect width="1200" height="675" fill="#fbfdf9"/>
+  <path d="M240 580V300c0-198 161-250 360-250s360 52 360 250v280" fill="#e8f3ec" stroke="#116a45" stroke-width="14"/>
+  <path d="M410 580V330c0-110 80-166 190-166s190 56 190 166v250" fill="#fff" stroke="#b58a2b" stroke-width="12"/>
+</svg>

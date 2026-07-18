@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-label="Gold book cover">
+  <rect width="600" height="800" rx="30" fill="#b58a2b"/>
+  <rect x="80" y="90" width="440" height="620" rx="24" fill="#10231a"/>
+  <path d="M300 180c90 64 135 132 135 204H165c0-72 45-140 135-204z" fill="#69c491"/>
+  <path d="M175 530h250M175 600h180" stroke="#fbfdf9" stroke-width="26" stroke-linecap="round"/>
+</svg>

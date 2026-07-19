@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { BookOpen, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { siteConfig } from "@/lib/site";
@@ -19,8 +20,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b bg-background/88 backdrop-blur-xl">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3 font-bold">
-          <span className="grid size-10 place-items-center rounded-md bg-primary text-primary-foreground">
-            <BookOpen className="size-5" aria-hidden="true" />
+          <span className="relative size-10 overflow-hidden rounded-md border bg-background">
+            <Image src="/icon1.png" alt="" fill sizes="40px" className="object-contain p-1" priority />
           </span>
           <span className="leading-tight">
             <span className="block text-base">{siteConfig.name}</span>

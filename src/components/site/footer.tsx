@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin, MessageCircle } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 
 export function SiteFooter() {
@@ -23,8 +23,9 @@ export function SiteFooter() {
           <h3 className="font-bold">ബന്ധപ്പെടുക</h3>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
             <span className="flex items-center gap-2"><MapPin className="size-4" />{siteConfig.address}</span>
+            <span className="flex items-center gap-2"><Phone className="size-4" />{siteConfig.phone}</span>
             <span className="flex items-center gap-2"><Mail className="size-4" />{siteConfig.email}</span>
-            <span className="flex items-center gap-2"><MessageCircle className="size-4" />WhatsApp</span>
+            <span className="flex items-center gap-2"><MessageCircle className="size-4" />WhatsApp: {siteConfig.phone}</span>
           </div>
         </div>
       </div>

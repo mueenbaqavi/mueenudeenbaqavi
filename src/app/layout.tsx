@@ -20,9 +20,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   ...createMetadata(),
-  applicationName: "Muheenudheen Baqavi Knowledge Platform",
+  applicationName: "Mueenuddeen Baqavi Knowledge Platform",
   manifest: "/manifest.webmanifest",
   category: "education",
+  appleWebApp: {
+    title: "Mueenuddeen Baqavi",
+  },
 };
 
 export default function RootLayout({
@@ -33,9 +36,9 @@ export default function RootLayout({
   return (
     <html lang="ml" suppressHydrationWarning className={`${anekMalayalam.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
+        <JsonLd data={organizationJsonLd} />
+        <JsonLd data={personJsonLd} />
         <ThemeProvider>
-          <JsonLd data={organizationJsonLd} />
-          <JsonLd data={personJsonLd} />
           <div className="flex min-h-screen flex-col">
             <SiteHeader />
             <main className="flex-1">{children}</main>

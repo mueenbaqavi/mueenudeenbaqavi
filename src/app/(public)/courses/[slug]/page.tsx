@@ -1,25 +1,24 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { CheckCircle2, Clock, MessageCircle, UserRound } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/content/breadcrumb-json-ld";
 import { JsonLd } from "@/components/site/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { courses } from "@/data/content";
-import { getCourseBySlug } from "@/lib/content";
+import { getPublishedCourseBySlug, listPublishedCourses } from "@/lib/content-repository";
 import { createMetadata, siteConfig } from "@/lib/site";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return courses.map((course) => ({ slug: course.slug }));
-}
+
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const course = await getPublishedCourseBySlug(slug);
+  if (!course) return createMetadata({ title: "Course Not Found" });
 
   return createMetadata({
     title: course.title,
@@ -30,7 +29,8 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function CourseDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const course = await getPublishedCourseBySlug(slug);
+  if (!course) notFound();
 
   return (
     <>

@@ -5,10 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ContentCard } from "@/components/sections/content-card";
 import { SectionHeading } from "@/components/sections/section-heading";
-import { articles, books, classSubjects, courses, fatwas, scholar } from "@/data/content";
+import { EmptyState } from "@/components/ui/empty-state";
 import { siteConfig } from "@/lib/site";
+import { scholar } from "@/lib/constants";
+import { listPublishedArticles, listPublishedFatwas, listPublishedBooks, listPublishedCourses, listClassSubjects } from "@/lib/content-repository";
 
-export default function Home() {
+export default async function Home() {
+  const [articles, fatwas, classSubjects, courses, books] = await Promise.all([
+    listPublishedArticles(),
+    listPublishedFatwas(),
+    listClassSubjects(),
+    listPublishedCourses(),
+    listPublishedBooks(),
+  ]);
+  const recentArticles = articles.slice(0, 3);
+  const recentFatwas = fatwas.slice(0, 3);
+  const recentBooks = books.slice(0, 2);
+
   return (
     <>
       <section className="border-b">
@@ -66,7 +79,7 @@ export default function Home() {
             <Link href="/articles" className="inline-flex items-center gap-2 font-bold text-primary">എല്ലാം കാണുക <ArrowRight className="size-4" /></Link>
           </div>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
-            {articles.map((item) => <ContentCard key={item.id} item={item} href={`/articles/${item.slug}`} />)}
+            {recentArticles.length > 0 ? recentArticles.map((item) => <ContentCard key={item.id} item={item} href={`/articles/${item.slug}`} />) : <EmptyState />}
           </div>
         </div>
       </section>
@@ -75,7 +88,7 @@ export default function Home() {
         <div>
           <SectionHeading title="പുതിയ ഫത്വകൾ" description="ചോദ്യവും മറുപടിയും, വിഭാഗം, ടാഗുകൾ, PDF, പ്രിന്റ്, ഷെയർ സൗകര്യങ്ങളോടെ." />
           <div className="mt-6 grid gap-4">
-            {fatwas.map((fatwa) => (
+            {recentFatwas.length > 0 ? recentFatwas.map((fatwa) => (
               <Card key={fatwa.number}>
                 <CardHeader>
                   <div className="flex items-center justify-between gap-3">
@@ -86,12 +99,13 @@ export default function Home() {
                 </CardHeader>
                 <CardContent><p className="leading-8 text-muted-foreground">{fatwa.question}</p></CardContent>
               </Card>
-            ))}
+            )) : <EmptyState />}
           </div>
         </div>
         <div>
           <SectionHeading title="ക്ലാസുകളും കോഴ്സുകളും" description="വിഷയങ്ങൾ, പുരോഗതി, യോഗ്യത, അപേക്ഷ എന്നിവ അഡ്മിനിൽ നിന്ന് നിയന്ത്രിക്കാവുന്ന രീതിയിൽ." />
           <div className="mt-6 grid gap-4">
+            {classSubjects.length === 0 && courses.length === 0 && <EmptyState />}
             {classSubjects.map((item) => (
               <Card key={item.subject}><CardContent className="pt-5"><h3 className="font-bold">{item.subject}</h3><p className="mt-2 text-sm text-muted-foreground">{item.classes} ക്ലാസുകൾ · {item.progress}% പൂർത്തിയായി</p></CardContent></Card>
             ))}
@@ -105,9 +119,9 @@ export default function Home() {
       <section className="container py-16">
         <SectionHeading title="പുസ്തകങ്ങൾ" description="കവർ, വിവരണം, PDF preview, വാങ്ങൽ, ഡൗൺലോഡ് സൗകര്യങ്ങൾക്കുള്ള ഘടന." />
         <div className="mt-8 grid gap-6 md:grid-cols-2">
-          {books.map((book) => (
+          {recentBooks.length > 0 ? recentBooks.map((book) => (
             <Card key={book.title}><CardContent className="pt-5"><Badge>{book.category}</Badge><h3 className="mt-3 text-xl font-bold">{book.title}</h3><p className="mt-2 leading-7 text-muted-foreground">{book.description}</p></CardContent></Card>
-          ))}
+          )) : <EmptyState />}
         </div>
       </section>
 

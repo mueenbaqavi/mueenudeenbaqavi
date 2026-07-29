@@ -4,7 +4,8 @@ import { PageHero } from "@/components/sections/page-hero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { categories } from "@/data/content";
+import { EmptyState } from "@/components/ui/empty-state";
+import { categories } from "@/lib/constants";
 import { listPublishedArticles } from "@/lib/content-repository";
 import { createMetadata } from "@/lib/site";
 
@@ -23,7 +24,7 @@ export default async function ArticlesPage() {
         </div>
         <div className="mt-5 flex flex-wrap gap-2">{categories.map((category) => <Badge key={category}>{category}</Badge>)}</div>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {articles.map((item) => <ContentCard key={item.id} item={item} href={`/articles/${item.slug}`} />)}
+          {articles.length > 0 ? articles.map((item) => <ContentCard key={item.id} item={item} href={`/articles/${item.slug}`} />) : <EmptyState />}
         </div>
       </section>
     </>

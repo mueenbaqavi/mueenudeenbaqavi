@@ -1,5 +1,20 @@
-import { articles, books, courses, fatwas, type ContentItem } from "@/data/content";
-import { createOptionalSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export type ContentItem = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  body: string[];
+  arabicQuote?: string;
+  category: string;
+  date: string;
+  readTime: string;
+  views: number;
+  author: string;
+  image: string;
+  tags: string[];
+};
 
 type ContentEntryRow = {
   title: string;
@@ -18,6 +33,26 @@ type FatwaRow = {
   question: string;
   answer: string;
   content_entries: ContentEntryRow | null;
+};
+
+type BookRow = {
+  purchase_url: string | null;
+  content_entries: ContentEntryRow | null;
+};
+
+type CourseRow = {
+  duration: string | null;
+  topics: string[];
+  eligibility: string | null;
+  instructor: string | null;
+  content_entries: ContentEntryRow | null;
+};
+
+type ClassSubjectRow = {
+  title: string;
+  slug: string;
+  description: string | null;
+  youtube_playlists: { classes_count: number; progress_percent: number }[];
 };
 
 function paragraphize(markdown: string | null) {
@@ -42,9 +77,7 @@ function mapContentRow(row: ContentEntryRow, image = "/images/article-emerald.sv
 }
 
 export async function listPublishedArticles() {
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) return articles;
-
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("content_entries")
     .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name)")
@@ -53,14 +86,12 @@ export async function listPublishedArticles() {
     .is("deleted_at", null)
     .order("published_at", { ascending: false });
 
-  if (error || !data?.length) return articles;
+  if (error || !data?.length) return [];
   return (data as unknown as ContentEntryRow[]).map((row) => mapContentRow(row));
 }
 
 export async function getPublishedArticleBySlug(slug: string) {
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) return articles.find((article) => article.slug === slug) ?? null;
-
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("content_entries")
     .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name)")
@@ -70,15 +101,12 @@ export async function getPublishedArticleBySlug(slug: string) {
     .is("deleted_at", null)
     .maybeSingle();
 
-  if (error || !data) return articles.find((article) => article.slug === slug) ?? null;
+  if (error || !data) return null;
   return mapContentRow(data as unknown as ContentEntryRow);
 }
 
 export async function listPublishedAhluSunnahArticles() {
-  const seeded = articles.filter((item) => item.category === "അഹ്‌ലുസ്സുന്ന" || item.tags.includes("സുന്നത്ത്"));
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) return seeded;
-
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("content_entries")
     .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name)")
@@ -87,14 +115,12 @@ export async function listPublishedAhluSunnahArticles() {
     .is("deleted_at", null)
     .order("published_at", { ascending: false });
 
-  if (error || !data?.length) return seeded;
+  if (error || !data?.length) return [];
   return (data as unknown as ContentEntryRow[]).map((row) => mapContentRow(row, "/images/article-gold.svg"));
 }
 
 export async function listPublishedFatwas() {
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) return fatwas;
-
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
     .select("fatwa_number, question, answer, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name))")
@@ -103,7 +129,7 @@ export async function listPublishedFatwas() {
     .is("content_entries.deleted_at", null)
     .order("published_at", { referencedTable: "content_entries", ascending: false });
 
-  if (error || !data?.length) return fatwas;
+  if (error || !data?.length) return [];
 
   return (data as unknown as FatwaRow[]).flatMap((row) => {
     if (!row.content_entries) return [];
@@ -123,9 +149,7 @@ export async function listPublishedFatwas() {
 }
 
 export async function getPublishedFatwaBySlug(slug: string) {
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) return fatwas.find((fatwa) => fatwa.slug === slug) ?? null;
-
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
     .select("fatwa_number, question, answer, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name))")
@@ -135,7 +159,7 @@ export async function getPublishedFatwaBySlug(slug: string) {
     .is("content_entries.deleted_at", null)
     .maybeSingle();
 
-  if (error || !data) return fatwas.find((fatwa) => fatwa.slug === slug) ?? null;
+  if (error || !data) return null;
   const row = data as unknown as FatwaRow;
   if (!row.content_entries) return null;
 
@@ -154,9 +178,81 @@ export async function getPublishedFatwaBySlug(slug: string) {
 }
 
 export async function listPublishedBooks() {
-  return books;
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("books")
+    .select("purchase_url, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name))")
+    .eq("content_entries.kind", "book")
+    .eq("content_entries.status", "published")
+    .is("content_entries.deleted_at", null)
+    .order("published_at", { referencedTable: "content_entries", ascending: false });
+
+  if (error || !data?.length) return [];
+  return (data as unknown as BookRow[]).flatMap((row) => {
+    if (!row.content_entries) return [];
+    return [{
+      title: row.content_entries.title,
+      slug: row.content_entries.slug,
+      category: row.content_entries.categories?.name ?? "General",
+      description: row.content_entries.excerpt ?? "",
+      cover: "/images/book-cover.svg",
+      pages: 128, // Currently static fallback if not stored
+      status: "Download Available",
+    }];
+  });
+}
+
+export async function getPublishedBookBySlug(slug: string) {
+  const books = await listPublishedBooks();
+  return books.find((b) => b.slug === slug) ?? null;
 }
 
 export async function listPublishedCourses() {
-  return courses;
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("courses")
+    .select("duration, topics, eligibility, instructor, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name))")
+    .eq("content_entries.kind", "course")
+    .eq("content_entries.status", "published")
+    .is("content_entries.deleted_at", null)
+    .order("published_at", { referencedTable: "content_entries", ascending: false });
+
+  if (error || !data?.length) return [];
+  return (data as unknown as CourseRow[]).flatMap((row) => {
+    if (!row.content_entries) return [];
+    return [{
+      title: row.content_entries.title,
+      slug: row.content_entries.slug,
+      description: row.content_entries.excerpt ?? "",
+      duration: row.duration ?? "Unknown",
+      topics: row.topics ?? [],
+      eligibility: row.eligibility ?? "Open",
+      instructor: row.instructor ?? "മുഹീനുദ്ദീൻ ബാഖവി",
+    }];
+  });
+}
+
+export async function getPublishedCourseBySlug(slug: string) {
+  const courses = await listPublishedCourses();
+  return courses.find((c) => c.slug === slug) ?? null;
+}
+
+export async function listClassSubjects() {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("class_subjects")
+    .select("title, slug, description, youtube_playlists(classes_count, progress_percent)")
+    .is("deleted_at", null)
+    .order("sort_order", { ascending: true });
+
+  if (error || !data?.length) return [];
+  return (data as unknown as ClassSubjectRow[]).map((row) => {
+    const playlist = row.youtube_playlists?.[0];
+    return {
+      subject: row.title,
+      playlist: "YouTube Playlist",
+      classes: playlist?.classes_count ?? 0,
+      progress: playlist?.progress_percent ?? 0,
+    };
+  });
 }

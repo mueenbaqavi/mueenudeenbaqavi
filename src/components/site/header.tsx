@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MobileNav } from "@/components/site/mobile-nav";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { siteConfig } from "@/lib/site";
 
@@ -17,7 +16,7 @@ const nav = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/88 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b bg-background">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3 font-bold">
           <span className="relative size-10 overflow-hidden rounded-md border bg-background">
@@ -37,9 +36,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-1">
           <ThemeToggle />
-          <Button size="icon" variant="ghost" className="lg:hidden" aria-label="മെനു തുറക്കുക">
-            <Menu className="size-5" />
-          </Button>
+          <MobileNav nav={nav} />
         </div>
       </div>
     </header>

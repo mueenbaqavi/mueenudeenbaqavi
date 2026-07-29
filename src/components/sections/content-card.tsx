@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Bookmark, CalendarDays, Eye, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import type { ContentItem } from "@/data/content";
+import type { ContentItem } from "@/lib/content-repository";
 import { formatMalayalamDate } from "@/lib/utils";
 
 export function ContentCard({ item, href }: { item: ContentItem; href: string }) {

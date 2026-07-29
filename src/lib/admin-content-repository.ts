@@ -1,5 +1,4 @@
-import { articles, fatwas } from "@/data/content";
-import { createOptionalSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type AdminContentStatus = "draft" | "scheduled" | "published" | "archived";
 
@@ -62,37 +61,6 @@ type AdminFatwaRow = {
   content_entries: ContentEntryRow | null;
 };
 
-function seedArticleRows(): AdminContentRow[] {
-  return articles.map((article) => ({
-    id: article.id,
-    kind: "article",
-    title: article.title,
-    slug: article.slug,
-    status: "published",
-    category: article.category,
-    publishedAt: article.date,
-    updatedAt: article.date,
-    views: article.views,
-    seoScore: 86,
-  }));
-}
-
-function seedFatwaRows(): AdminContentRow[] {
-  return fatwas.map((fatwa) => ({
-    id: fatwa.number,
-    kind: "fatwa",
-    title: fatwa.title,
-    slug: fatwa.slug,
-    status: "published",
-    category: fatwa.category,
-    publishedAt: fatwa.date,
-    updatedAt: fatwa.date,
-    views: fatwa.views,
-    seoScore: 82,
-    fatwaNumber: fatwa.number,
-  }));
-}
-
 function mapContentRow(row: ContentEntryRow): AdminContentRow {
   return {
     id: row.id,
@@ -109,9 +77,7 @@ function mapContentRow(row: ContentEntryRow): AdminContentRow {
 }
 
 export async function listAdminArticles(status?: AdminContentStatus | "all") {
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) return seedArticleRows();
-
+  const supabase = await createSupabaseServerClient();
   let query = supabase
     .from("content_entries")
     .select("id, kind, title, slug, status, published_at, updated_at, views_count, seo_score, categories(name)")
@@ -124,14 +90,12 @@ export async function listAdminArticles(status?: AdminContentStatus | "all") {
   }
 
   const { data, error } = await query;
-  if (error || !data) return seedArticleRows();
+  if (error || !data) return [];
   return (data as unknown as ContentEntryRow[]).map(mapContentRow);
 }
 
 export async function listAdminFatwas(status?: AdminContentStatus | "all") {
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) return seedFatwaRows();
-
+  const supabase = await createSupabaseServerClient();
   let query = supabase
     .from("fatwas")
     .select("fatwa_number, content_entries!inner(id, kind, title, slug, status, published_at, updated_at, views_count, seo_score, categories(name))")
@@ -144,7 +108,7 @@ export async function listAdminFatwas(status?: AdminContentStatus | "all") {
   }
 
   const { data, error } = await query;
-  if (error || !data) return seedFatwaRows();
+  if (error || !data) return [];
 
   return (data as unknown as AdminFatwaRow[]).flatMap((row) => {
     if (!row.content_entries) return [];
@@ -158,24 +122,7 @@ function toDateTimeLocal(value?: string | null) {
 }
 
 export async function getAdminArticleForEdit(id: string): Promise<AdminArticleEditorValue | null> {
-  const seed = articles.find((article) => article.id === id || article.slug === id);
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) {
-    return seed ? {
-      id: seed.id,
-      title: seed.title,
-      slug: seed.slug,
-      excerpt: seed.excerpt,
-      bodyMarkdown: seed.body.join("\n\n"),
-      category: seed.category,
-      tags: seed.tags.join(", "),
-      status: "published",
-      scheduledAt: "",
-      seoTitle: seed.title,
-      seoDescription: seed.excerpt,
-    } : null;
-  }
-
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("content_entries")
     .select("id, title, slug, excerpt, body_markdown, status, scheduled_at, seo_title, seo_description, categories(name), content_tags(tags(name))")
@@ -203,25 +150,7 @@ export async function getAdminArticleForEdit(id: string): Promise<AdminArticleEd
 }
 
 export async function getAdminFatwaForEdit(id: string): Promise<AdminFatwaEditorValue | null> {
-  const seed = fatwas.find((fatwa) => fatwa.number === id || fatwa.slug === id);
-  const supabase = await createOptionalSupabaseServerClient();
-  if (!supabase) {
-    return seed ? {
-      id: seed.number,
-      fatwaNumber: seed.number,
-      title: seed.title,
-      slug: seed.slug,
-      question: seed.question,
-      answer: seed.answer,
-      category: seed.category,
-      tags: seed.tags.join(", "),
-      status: "published",
-      scheduledAt: "",
-      seoTitle: seed.title,
-      seoDescription: seed.question,
-    } : null;
-  }
-
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
     .select("fatwa_number, question, answer, content_entries!inner(id, title, slug, status, scheduled_at, seo_title, seo_description, categories(name), content_tags(tags(name)))")
@@ -247,5 +176,22 @@ export async function getAdminFatwaForEdit(id: string): Promise<AdminFatwaEditor
     scheduledAt: toDateTimeLocal(row.content_entries.scheduled_at),
     seoTitle: row.content_entries.seo_title ?? "",
     seoDescription: row.content_entries.seo_description ?? "",
+  };
+}
+
+export async function getAdminDashboardStats() {
+  const supabase = await createSupabaseServerClient();
+  
+  const [published, fatwas, users] = await Promise.all([
+    supabase.from("content_entries").select("*", { count: "exact", head: true }).eq("status", "published").is("deleted_at", null),
+    supabase.from("content_entries").select("*", { count: "exact", head: true }).eq("kind", "fatwa").is("deleted_at", null),
+    supabase.from("profiles").select("*", { count: "exact", head: true }),
+  ]);
+
+  return {
+    published: published.count ?? 0,
+    fatwas: fatwas.count ?? 0,
+    media: 0, // Storage API count requires listing files, keep static or 0 for now
+    users: users.count ?? 0,
   };
 }

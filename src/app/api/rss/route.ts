@@ -1,9 +1,10 @@
-import { articles } from "@/data/content";
+import { listPublishedArticles } from "@/lib/content-repository";
 import { siteConfig } from "@/lib/site";
 
 export const revalidate = 3600;
 
-export function GET() {
+export async function GET() {
+  const articles = await listPublishedArticles();
   const items = articles
     .map((item) => `<item><title><![CDATA[${item.title}]]></title><link>${siteConfig.url}/articles/${item.slug}</link><description><![CDATA[${item.excerpt}]]></description><pubDate>${new Date(item.date).toUTCString()}</pubDate><guid>${siteConfig.url}/articles/${item.slug}</guid></item>`)
     .join("");

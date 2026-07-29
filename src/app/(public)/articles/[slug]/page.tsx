@@ -5,7 +5,6 @@ import { BreadcrumbJsonLd } from "@/components/content/breadcrumb-json-ld";
 import { RelatedList } from "@/components/content/related-list";
 import { ShareActions } from "@/components/content/share-actions";
 import { Badge } from "@/components/ui/badge";
-import { articles } from "@/data/content";
 import { getPublishedArticleBySlug, listPublishedArticles } from "@/lib/content-repository";
 import { createMetadata, siteConfig } from "@/lib/site";
 import { absoluteUrl, formatMalayalamDate } from "@/lib/utils";
@@ -15,9 +14,7 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
-}
+
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;

@@ -1,9 +1,10 @@
-import { articles, books, courses, fatwas } from "@/data/content";
+import { listPublishedArticles, listPublishedBooks, listPublishedCourses, listPublishedFatwas } from "@/lib/content-repository";
 import { siteConfig } from "@/lib/site";
 
 export const revalidate = 3600;
 
-export function GET() {
+export async function GET() {
+  const [articles, books, courses, fatwas] = await Promise.all([listPublishedArticles(), listPublishedBooks(), listPublishedCourses(), listPublishedFatwas()]);
   const staticRoutes = ["", "/biography", "/articles", "/fatwas", "/books", "/classes", "/courses", "/ahlu-sunnah", "/contact"];
   const dynamicRoutes = [
     ...articles.map((item) => `/articles/${item.slug}`),

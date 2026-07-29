@@ -7,7 +7,6 @@ import { ShareActions } from "@/components/content/share-actions";
 import { JsonLd } from "@/components/site/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { fatwas } from "@/data/content";
 import { getPublishedFatwaBySlug, listPublishedFatwas } from "@/lib/content-repository";
 import { createMetadata, siteConfig } from "@/lib/site";
 import { absoluteUrl, formatMalayalamDate } from "@/lib/utils";
@@ -16,9 +15,7 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return fatwas.map((fatwa) => ({ slug: fatwa.slug }));
-}
+
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;

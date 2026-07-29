@@ -1,12 +1,12 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import { Download, Eye, ShoppingBag } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/content/breadcrumb-json-ld";
 import { ShareActions } from "@/components/content/share-actions";
 import { JsonLd } from "@/components/site/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { books } from "@/data/content";
-import { getBookBySlug } from "@/lib/content";
+import { getPublishedBookBySlug, listPublishedBooks } from "@/lib/content-repository";
 import { createMetadata } from "@/lib/site";
 import { absoluteUrl } from "@/lib/utils";
 
@@ -14,13 +14,12 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return books.map((book) => ({ slug: book.slug }));
-}
+
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  const book = getBookBySlug(slug);
+  const book = await getPublishedBookBySlug(slug);
+  if (!book) return createMetadata({ title: "Book Not Found" });
 
   return createMetadata({
     title: book.title,
@@ -32,7 +31,9 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function BookDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const book = getBookBySlug(slug);
+  const book = await getPublishedBookBySlug(slug);
+  if (!book) notFound();
+  
   const url = absoluteUrl(`/books/${book.slug}`);
 
   return (

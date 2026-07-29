@@ -6,7 +6,6 @@ import { RelatedList } from "@/components/content/related-list";
 import { ShareActions } from "@/components/content/share-actions";
 import { JsonLd } from "@/components/site/json-ld";
 import { Badge } from "@/components/ui/badge";
-import { articles } from "@/data/content";
 import { getPublishedArticleBySlug, listPublishedAhluSunnahArticles } from "@/lib/content-repository";
 import { createMetadata, siteConfig } from "@/lib/site";
 import { absoluteUrl, formatMalayalamDate } from "@/lib/utils";
@@ -15,11 +14,7 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const ahluSunnahArticles = articles.filter((item) => item.category === "അഹ്‌ലുസ്സുന്ന" || item.tags.includes("സുന്നത്ത്"));
 
-export function generateStaticParams() {
-  return ahluSunnahArticles.map((article) => ({ slug: article.slug }));
-}
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;

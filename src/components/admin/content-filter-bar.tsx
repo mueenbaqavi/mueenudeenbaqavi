@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { AdminContentStatus } from "@/lib/admin-content-repository";
 
-const statuses: (AdminContentStatus | "all")[] = ["all", "draft", "scheduled", "published", "archived"];
+const statuses: (AdminContentStatus | "all")[] = ["all", "draft", "published"];
 
 export function ContentFilterBar({
   basePath,

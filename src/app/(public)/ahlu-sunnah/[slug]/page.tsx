@@ -10,6 +10,8 @@ import { getPublishedArticleBySlug, listPublishedAhluSunnahArticles } from "@/li
 import { createMetadata, siteConfig } from "@/lib/site";
 import { absoluteUrl, formatMalayalamDate } from "@/lib/utils";
 
+import { marked } from "marked";
+
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -58,7 +60,7 @@ export default async function AhluSunnahDetailPage({ params }: PageProps) {
           <Image src={article.image} alt="" fill className="object-cover" priority sizes="(min-width: 1024px) 960px, 100vw" />
         </div>
         <div className="prose-platform mx-auto mt-10 max-w-3xl">
-          {article.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          <div dangerouslySetInnerHTML={{ __html: marked.parse(article.body, { breaks: true }) as string }} />
         </div>
         <div className="mx-auto max-w-5xl">
           <RelatedList title="ബന്ധപ്പെട്ട ഉള്ളടക്കങ്ങൾ" items={related} basePath="/ahlu-sunnah" />

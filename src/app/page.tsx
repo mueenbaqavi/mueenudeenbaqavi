@@ -20,7 +20,9 @@ export default async function Home() {
   ]);
   const recentArticles = articles.slice(0, 3);
   const recentFatwas = fatwas.slice(0, 3);
-  const recentBooks = books.slice(0, 2);
+  const recentBooks = books.slice(0, 3);
+  const recentClassSubjects = classSubjects.slice(0, 3);
+  const recentCourses = courses.slice(0, 3);
 
   return (
     <>
@@ -105,11 +107,11 @@ export default async function Home() {
         <div>
           <SectionHeading title="ക്ലാസുകളും കോഴ്സുകളും" description="വിഷയങ്ങൾ, പുരോഗതി, യോഗ്യത, അപേക്ഷ എന്നിവ അഡ്മിനിൽ നിന്ന് നിയന്ത്രിക്കാവുന്ന രീതിയിൽ." />
           <div className="mt-6 grid gap-4">
-            {classSubjects.length === 0 && courses.length === 0 && <EmptyState />}
-            {classSubjects.map((item) => (
+            {recentClassSubjects.length === 0 && recentCourses.length === 0 && <EmptyState />}
+            {recentClassSubjects.map((item) => (
               <Card key={item.subject}><CardContent className="pt-5"><h3 className="font-bold">{item.subject}</h3><p className="mt-2 text-sm text-muted-foreground">{item.classes} ക്ലാസുകൾ · {item.progress}% പൂർത്തിയായി</p></CardContent></Card>
             ))}
-            {courses.map((course) => (
+            {recentCourses.map((course) => (
               <Card key={course.title}><CardContent className="pt-5"><h3 className="font-bold">{course.title}</h3><p className="mt-2 text-sm text-muted-foreground">{course.duration} · {course.eligibility}</p></CardContent></Card>
             ))}
           </div>

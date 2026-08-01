@@ -10,10 +10,12 @@ export function PageHero({
   className?: string;
 }) {
   return (
-    <section className={cn("border-b bg-muted/40 py-16 md:py-20", className)}>
+    <section className={cn("border-b bg-muted/40 py-8 md:py-12", className)}>
       <div className="container">
-        <h1 className="max-w-4xl text-4xl font-bold leading-tight md:text-6xl">{title}</h1>
-        <p className="mt-5 max-w-3xl text-lg leading-9 text-muted-foreground md:text-xl">{description}</p>
+        <h1 className="max-w-4xl text-3xl font-bold leading-tight md:text-4xl">{title}</h1>
+        {description && (
+          <p className="mt-3 max-w-3xl text-base text-muted-foreground md:text-lg">{description}</p>
+        )}
       </div>
     </section>
   );

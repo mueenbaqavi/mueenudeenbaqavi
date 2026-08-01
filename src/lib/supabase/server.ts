@@ -36,3 +36,18 @@ export async function createOptionalSupabaseServerClient() {
 
   return createSupabaseServerClient();
 }
+
+export function createSupabaseAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    throw new Error("Missing Supabase admin environment variables.");
+  }
+
+  // Admin client bypassing RLS, no cookies needed as it uses service role
+  const { createClient } = require("@supabase/supabase-js");
+  return createClient(url, serviceKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}

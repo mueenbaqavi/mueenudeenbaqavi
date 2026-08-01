@@ -1,37 +1,44 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
-import { Bookmark, CalendarDays, Eye, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ContentItem } from "@/lib/content-repository";
-import { formatMalayalamDate } from "@/lib/utils";
+import { User, Clock } from "lucide-react";
 
 export function ContentCard({ item, href }: { item: ContentItem; href: string }) {
   return (
-    <Card className="overflow-hidden">
-      <Link href={href} className="block">
-        <div className="relative aspect-[16/9] bg-secondary">
-          <Image src={item.image} alt="" fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" />
-        </div>
-      </Link>
-      <CardContent className="pt-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge>{item.category}</Badge>
-          <span className="text-xs text-muted-foreground">{item.readTime}</span>
-        </div>
-        <h3 className="mt-3 text-xl font-bold leading-snug">
-          <Link href={href}>{item.title}</Link>
-        </h3>
-        <p className="mt-2 line-clamp-3 leading-7 text-muted-foreground">{item.excerpt}</p>
-        <div className="mt-5 flex items-center justify-between text-xs text-muted-foreground">
-          <span className="flex items-center gap-1"><CalendarDays className="size-3.5" />{formatMalayalamDate(item.date)}</span>
-          <span className="flex items-center gap-1"><Eye className="size-3.5" />{item.views}</span>
-          <span className="flex items-center gap-2">
-            <Bookmark className="size-4" />
-            <Share2 className="size-4" />
-          </span>
-        </div>
-      </CardContent>
-    </Card>
+    <Link href={href} className="block group h-full">
+      <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/50 group-hover:-translate-y-1">
+        <CardContent className="p-6 flex flex-col h-full">
+          <h3 className="text-2xl font-bold leading-snug group-hover:text-primary transition-colors">
+            {item.title}
+          </h3>
+          
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
+              {item.category}
+            </Badge>
+            <span className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+              <Clock className="size-3.5" />
+              {item.readTime}
+            </span>
+          </div>
+
+          <div className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-foreground/80">
+            <User className="size-4" />
+            {item.author}
+          </div>
+
+          <p className="mt-4 line-clamp-3 leading-loose text-muted-foreground flex-grow">
+            {item.excerpt}
+          </p>
+          
+          <div className="mt-4 text-sm font-bold text-primary flex items-center gap-1 group-hover:underline underline-offset-4">
+            .....read more
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

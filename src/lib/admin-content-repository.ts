@@ -1,5 +1,17 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+export async function listCategories(kind: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.from("categories").select("name").eq("kind", kind);
+  return data?.map(c => c.name) || [];
+}
+
+export async function listAuthors() {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.from("authors").select("name");
+  return data?.map(a => a.name) || [];
+}
+
 export type AdminContentStatus = "draft" | "scheduled" | "published" | "archived";
 
 export type AdminContentRow = {
@@ -23,6 +35,7 @@ export type AdminArticleEditorValue = {
   excerpt: string;
   bodyMarkdown: string;
   category: string;
+  author: string;
   tags: string;
   status: AdminContentStatus;
   scheduledAt: string;
@@ -52,6 +65,7 @@ type ContentEntryRow = {
   seo_title?: string | null;
   seo_description?: string | null;
   categories: { name: string } | null;
+  authors?: { name: string } | null;
 };
 
 type AdminFatwaRow = {
@@ -125,7 +139,7 @@ export async function getAdminArticleForEdit(id: string): Promise<AdminArticleEd
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("content_entries")
-    .select("id, title, slug, excerpt, body_markdown, status, scheduled_at, seo_title, seo_description, categories(name), content_tags(tags(name))")
+    .select("id, title, slug, excerpt, body_markdown, status, scheduled_at, seo_title, seo_description, categories(name), authors(name), content_tags(tags(name))")
     .eq("id", id)
     .eq("kind", "article")
     .is("deleted_at", null)
@@ -141,6 +155,7 @@ export async function getAdminArticleForEdit(id: string): Promise<AdminArticleEd
     excerpt: row.excerpt ?? "",
     bodyMarkdown: row.body_markdown ?? "",
     category: row.categories?.name ?? "",
+    author: row.authors?.name ?? "മുഈനുദ്ദീൻ ബാഖവി",
     tags: row.content_tags?.map((item) => item.tags?.name).filter(Boolean).join(", ") ?? "",
     status: row.status,
     scheduledAt: toDateTimeLocal(row.scheduled_at),
@@ -153,7 +168,7 @@ export async function getAdminFatwaForEdit(id: string): Promise<AdminFatwaEditor
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
-    .select("fatwa_number, question, answer, content_entries!inner(id, title, slug, status, scheduled_at, seo_title, seo_description, categories(name), content_tags(tags(name)))")
+    .select("fatwa_number, question, answer, content_entries!inner(id, title, slug, status, scheduled_at, seo_title, seo_description, categories(name), authors(name), content_tags(tags(name)))")
     .eq("content_id", id)
     .maybeSingle();
 
@@ -171,6 +186,7 @@ export async function getAdminFatwaForEdit(id: string): Promise<AdminFatwaEditor
     question: row.question ?? "",
     answer: row.answer ?? "",
     category: row.content_entries.categories?.name ?? "",
+    author: row.content_entries.authors?.name ?? "മുഈനുദ്ദീൻ ബാഖവി",
     tags: row.content_entries.content_tags?.map((item) => item.tags?.name).filter(Boolean).join(", ") ?? "",
     status: row.content_entries.status,
     scheduledAt: toDateTimeLocal(row.content_entries.scheduled_at),

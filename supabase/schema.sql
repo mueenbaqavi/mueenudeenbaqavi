@@ -81,6 +81,7 @@ create table public.content_entries (
   canonical_url text,
   created_by uuid references public.profiles(id),
   updated_by uuid references public.profiles(id),
+  custom_author_id uuid, -- Reference to public.authors(id) added at the end
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   deleted_at timestamptz,
@@ -201,6 +202,19 @@ create view public.published_content as
 select *
 from public.content_entries
 where status = 'published' and deleted_at is null and (published_at is null or published_at <= now());
+
+create table public.authors (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text not null unique,
+  created_at timestamptz not null default now()
+);
+
+alter table public.content_entries add constraint fk_custom_author foreign key (custom_author_id) references public.authors(id) on delete set null;
+
+alter table public.authors enable row level security;
+create policy "Public can read authors" on public.authors for select using (true);
+create policy "Editors can manage authors" on public.authors for all using (public.current_role() in ('admin', 'editor')) with check (public.current_role() in ('admin', 'editor'));
 
 alter table public.profiles enable row level security;
 alter table public.categories enable row level security;

@@ -5,7 +5,7 @@ export type ContentItem = {
   title: string;
   slug: string;
   excerpt: string;
-  body: string[];
+  body: string;
   arabicQuote?: string;
   category: string;
   date: string;
@@ -26,6 +26,7 @@ type ContentEntryRow = {
   views_count: number | null;
   categories: { name: string } | null;
   profiles: { full_name: string } | null;
+  authors?: { name: string } | null;
 };
 
 type FatwaRow = {
@@ -55,22 +56,18 @@ type ClassSubjectRow = {
   youtube_playlists: { classes_count: number; progress_percent: number }[];
 };
 
-function paragraphize(markdown: string | null) {
-  return markdown?.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean) ?? [];
-}
-
 function mapContentRow(row: ContentEntryRow, image = "/images/article-emerald.svg"): ContentItem {
   return {
     id: row.slug,
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt ?? "",
-    body: paragraphize(row.body_markdown),
+    body: row.body_markdown ?? "",
     category: row.categories?.name ?? "General",
     date: row.published_at ?? new Date().toISOString(),
     readTime: `${row.read_time_minutes ?? 1} മിനിറ്റ്`,
     views: row.views_count ?? 0,
-    author: row.profiles?.full_name ?? "മുഹീനുദ്ദീൻ ബാഖവി",
+    author: row.authors?.name ?? row.profiles?.full_name ?? "മുഈനുദ്ദീൻ ബാഖവി",
     image,
     tags: [],
   };
@@ -80,7 +77,7 @@ export async function listPublishedArticles() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("content_entries")
-    .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name)")
+    .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name), authors(name)")
     .eq("kind", "article")
     .eq("status", "published")
     .is("deleted_at", null)
@@ -94,7 +91,7 @@ export async function getPublishedArticleBySlug(slug: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("content_entries")
-    .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name)")
+    .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name), authors(name)")
     .eq("kind", "article")
     .eq("status", "published")
     .eq("slug", slug)
@@ -109,7 +106,7 @@ export async function listPublishedAhluSunnahArticles() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("content_entries")
-    .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name)")
+    .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name)")
     .eq("kind", "ahlu_sunnah")
     .eq("status", "published")
     .is("deleted_at", null)
@@ -123,7 +120,7 @@ export async function listPublishedFatwas() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
-    .select("fatwa_number, question, answer, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name))")
+    .select("fatwa_number, question, answer, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
     .eq("content_entries.kind", "fatwa")
     .eq("content_entries.status", "published")
     .is("content_entries.deleted_at", null)
@@ -152,7 +149,7 @@ export async function getPublishedFatwaBySlug(slug: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
-    .select("fatwa_number, question, answer, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name))")
+    .select("fatwa_number, question, answer, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
     .eq("content_entries.kind", "fatwa")
     .eq("content_entries.status", "published")
     .eq("content_entries.slug", slug)
@@ -181,7 +178,7 @@ export async function listPublishedBooks() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("books")
-    .select("purchase_url, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name))")
+    .select("purchase_url, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
     .eq("content_entries.kind", "book")
     .eq("content_entries.status", "published")
     .is("content_entries.deleted_at", null)
@@ -211,7 +208,7 @@ export async function listPublishedCourses() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("courses")
-    .select("duration, topics, eligibility, instructor, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles(full_name))")
+    .select("duration, topics, eligibility, instructor, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
     .eq("content_entries.kind", "course")
     .eq("content_entries.status", "published")
     .is("content_entries.deleted_at", null)
@@ -227,7 +224,7 @@ export async function listPublishedCourses() {
       duration: row.duration ?? "Unknown",
       topics: row.topics ?? [],
       eligibility: row.eligibility ?? "Open",
-      instructor: row.instructor ?? "മുഹീനുദ്ദീൻ ബാഖവി",
+      instructor: row.instructor ?? "മുഈനുദ്ദീൻ ബാഖവി",
     }];
   });
 }

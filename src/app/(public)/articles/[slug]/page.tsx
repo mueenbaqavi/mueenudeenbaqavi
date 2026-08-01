@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CalendarDays, Eye, UserRound } from "lucide-react";
+import { marked } from "marked";
 import { BreadcrumbJsonLd } from "@/components/content/breadcrumb-json-ld";
 import { RelatedList } from "@/components/content/related-list";
 import { ShareActions } from "@/components/content/share-actions";
@@ -53,52 +54,61 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           "@type": "Article",
           headline: article.title,
           description: article.excerpt,
-          image: absoluteUrl(article.image),
           author: { "@type": "Person", name: article.author },
           publisher: { "@type": "Organization", name: siteConfig.name, url: siteConfig.url },
           datePublished: article.date,
           mainEntityOfPage: url,
         }}
       />
-      <article className="container py-12">
-        <div className="mx-auto max-w-4xl">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge>{article.category}</Badge>
-            {article.tags.map((tag) => (
-              <Badge key={tag} className="bg-accent/15 text-accent">
-                {tag}
-              </Badge>
-            ))}
+      
+      {/* Hide the main footer via CSS since this page has a custom one */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        footer.bg-secondary { display: none !important; }
+      `}} />
+
+      <article className="container py-12 pb-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="mt-5 text-4xl font-bold leading-tight md:text-6xl text-foreground">{article.title}</h1>
+          
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 text-base text-muted-foreground">
+            <span className="flex items-center gap-2 font-bold text-foreground">
+              <UserRound className="size-5" />{article.author}
+            </span>
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-2"><CalendarDays className="size-4" />{formatMalayalamDate(article.date)}</span>
+              <span className="flex items-center gap-2">• {article.readTime}</span>
+              <Badge className="bg-primary/10 text-primary hover:bg-primary/20">{article.category}</Badge>
+            </div>
           </div>
-          <h1 className="mt-5 text-4xl font-bold leading-tight md:text-6xl">{article.title}</h1>
-          <p className="mt-5 text-xl leading-9 text-muted-foreground">{article.excerpt}</p>
-          <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2"><UserRound className="size-4" />{article.author}</span>
-            <span className="flex items-center gap-2"><CalendarDays className="size-4" />{formatMalayalamDate(article.date)}</span>
-            <span className="flex items-center gap-2"><Eye className="size-4" />{article.views}</span>
-            <span>{article.readTime}</span>
-          </div>
-          <div className="mt-8">
+          
+          <div className="mt-8 flex justify-center">
             <ShareActions title={article.title} url={url} />
           </div>
         </div>
-        <div className="relative mx-auto mt-10 aspect-[16/9] max-w-5xl overflow-hidden rounded-lg border bg-secondary">
-          <Image src={article.image} alt="" fill className="object-cover" priority sizes="(min-width: 1024px) 960px, 100vw" />
-        </div>
-        <div className="prose-platform mx-auto mt-10 max-w-3xl">
+
+        <div className="prose-platform mx-auto mt-16 max-w-3xl text-lg leading-loose text-foreground/90">
           {article.arabicQuote ? (
-            <blockquote dir="rtl" className="arabic-quote rounded-lg border bg-muted p-5 text-3xl text-primary">
+            <blockquote dir="rtl" className="arabic-quote rounded-lg border bg-muted p-5 text-3xl text-primary mb-8">
               {article.arabicQuote}
             </blockquote>
           ) : null}
-          {article.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
+          
+          <div 
+            className="space-y-6"
+            dangerouslySetInnerHTML={{ __html: marked.parse(article.body, { breaks: true }) as string }} 
+          />
         </div>
-        <div className="mx-auto max-w-5xl">
-          <RelatedList title="ബന്ധപ്പെട്ട ലേഖനങ്ങൾ" items={related} basePath="/articles" />
-        </div>
+
+        {related.length > 0 ? (
+          <div className="mx-auto mt-24 max-w-5xl border-t pt-16">
+            <RelatedList title="ബന്ധപ്പെട്ട ലേഖനങ്ങൾ" items={related} basePath="/articles" />
+          </div>
+        ) : null}
       </article>
+
+      <footer className="border-t py-8 text-center text-sm text-muted-foreground">
+        <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
+      </footer>
     </>
   );
 }

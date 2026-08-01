@@ -132,6 +132,22 @@ body {
   margin-top: 1rem;
 }
 
+.prose-platform ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-top: 1rem;
+}
+
+.prose-platform ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  margin-top: 1rem;
+}
+
+.prose-platform li {
+  margin-top: 0.5rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

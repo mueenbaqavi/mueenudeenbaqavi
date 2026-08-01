@@ -11,6 +11,8 @@ import { getPublishedFatwaBySlug, listPublishedFatwas } from "@/lib/content-repo
 import { createMetadata, siteConfig } from "@/lib/site";
 import { absoluteUrl, formatMalayalamDate } from "@/lib/utils";
 
+import { marked } from "marked";
+
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -80,7 +82,7 @@ export default async function FatwaDetailPage({ params }: PageProps) {
         </div>
         <div className="prose-platform mt-8 rounded-lg border bg-card p-6 shadow-[var(--shadow-card)]">
           <h2>മറുപടി</h2>
-          <p>{fatwa.answer}</p>
+          <div dangerouslySetInnerHTML={{ __html: marked.parse(fatwa.answer, { breaks: true }) as string }} />
           <p>വ്യക്തിഗത സാഹചര്യങ്ങൾ വ്യത്യസ്തമായതിനാൽ പ്രായോഗിക തീരുമാനങ്ങൾക്ക് നേരിട്ട് പണ്ഡിത മാർഗ്ഗനിർദ്ദേശം തേടുന്നത് നല്ലതാണ്.</p>
         </div>
         <div className="mt-8">

@@ -62,7 +62,7 @@ export default function BiographyPage() {
                 alt="മുഈനുദ്ദീൻ ബാഖവി പി"
                 fill
                 priority
-                className="object-contain p-3"
+                className="object-cover"
                 sizes="(min-width: 1024px) 360px, 100vw"
               />
             </div>

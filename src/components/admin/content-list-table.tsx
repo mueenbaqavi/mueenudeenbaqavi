@@ -39,7 +39,9 @@ export function ContentListTable({
                   /{row.slug} · Updated {formatMalayalamDate(row.updatedAt)}
                 </p>
               </div>
-              <ContentStatusBadge status={row.status} />
+              <div>
+                <ContentStatusBadge status={row.status} />
+              </div>
               <span className="text-muted-foreground">{row.category}</span>
               <span className="font-mono text-muted-foreground">{row.views}</span>
               <span className="font-mono text-muted-foreground">{row.seoScore ?? "-"}/100</span>

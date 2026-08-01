@@ -43,10 +43,12 @@ export type AdminArticleEditorValue = {
   seoDescription: string;
 };
 
-export type AdminFatwaEditorValue = Omit<AdminArticleEditorValue, "excerpt" | "bodyMarkdown"> & {
+export type AdminFatwaEditorValue = Omit<AdminArticleEditorValue, "excerpt" | "bodyMarkdown" | "author"> & {
   fatwaNumber: string;
   question: string;
   answer: string;
+  references: string[];
+  givenBy: string[];
 };
 
 type ContentEntryRow = {
@@ -72,6 +74,8 @@ type AdminFatwaRow = {
   fatwa_number: string;
   question?: string;
   answer?: string;
+  references?: string[];
+  given_by?: string[];
   content_entries: ContentEntryRow | null;
 };
 
@@ -168,7 +172,7 @@ export async function getAdminFatwaForEdit(id: string): Promise<AdminFatwaEditor
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
-    .select("fatwa_number, question, answer, content_entries!inner(id, title, slug, status, scheduled_at, seo_title, seo_description, categories(name), authors(name), content_tags(tags(name)))")
+    .select("fatwa_number, question, answer, references, given_by, content_entries!inner(id, title, slug, status, scheduled_at, seo_title, seo_description, categories(name), authors(name), content_tags(tags(name)))")
     .eq("content_id", id)
     .maybeSingle();
 
@@ -185,8 +189,9 @@ export async function getAdminFatwaForEdit(id: string): Promise<AdminFatwaEditor
     slug: row.content_entries.slug,
     question: row.question ?? "",
     answer: row.answer ?? "",
+    references: row.references ?? [],
+    givenBy: row.given_by ?? ["മുഈനുദ്ദീൻ ബാഖവി"],
     category: row.content_entries.categories?.name ?? "",
-    author: row.content_entries.authors?.name ?? "മുഈനുദ്ദീൻ ബാഖവി",
     tags: row.content_entries.content_tags?.map((item) => item.tags?.name).filter(Boolean).join(", ") ?? "",
     status: row.content_entries.status,
     scheduledAt: toDateTimeLocal(row.content_entries.scheduled_at),
@@ -209,5 +214,58 @@ export async function getAdminDashboardStats() {
     fatwas: fatwas.count ?? 0,
     media: 0, // Storage API count requires listing files, keep static or 0 for now
     users: users.count ?? 0,
+  };
+}
+
+export type AdminClassSubjectRow = {
+  id: string;
+  title: string;
+  slug: string;
+  youtubeUrl: string;
+  classesCount: number;
+  progressPercent: number;
+};
+
+export async function listAdminClassSubjects(): Promise<AdminClassSubjectRow[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("class_subjects")
+    .select("id, title, slug, youtube_playlists(youtube_playlist_id, classes_count, progress_percent)")
+    .order("created_at", { ascending: false });
+
+  if (error || !data) return [];
+
+  return (data as any[]).map((row) => {
+    const playlist = row.youtube_playlists?.[0];
+    return {
+      id: row.id,
+      title: row.title,
+      slug: row.slug,
+      youtubeUrl: playlist ? `https://youtube.com/playlist?list=${playlist.youtube_playlist_id}` : "",
+      classesCount: playlist?.classes_count ?? 0,
+      progressPercent: playlist?.progress_percent ?? 0,
+    };
+  });
+}
+
+export async function getAdminClassSubjectForEdit(id: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("class_subjects")
+    .select("id, title, slug, description, youtube_playlists(youtube_playlist_id, classes_count, progress_percent)")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  const playlist = data.youtube_playlists?.[0];
+  return {
+    id: data.id,
+    title: data.title,
+    slug: data.slug,
+    description: data.description ?? "",
+    youtubeUrl: playlist ? `https://youtube.com/playlist?list=${playlist.youtube_playlist_id}` : "",
+    classesCount: playlist?.classes_count ?? 0,
+    progressPercent: playlist?.progress_percent ?? 0,
   };
 }

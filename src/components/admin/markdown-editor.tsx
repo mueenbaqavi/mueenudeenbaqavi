@@ -10,13 +10,15 @@ export function MarkdownEditor({ name, value, onChange, placeholder }: { name: s
     if (!textarea) return;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
+    const scrollTop = textarea.scrollTop;
     const selected = value.substring(start, end);
     const newValue = value.substring(0, start) + before + selected + after + value.substring(end);
     onChange(newValue);
-    setTimeout(() => {
-      textarea.focus();
+    requestAnimationFrame(() => {
+      textarea.focus({ preventScroll: true });
       textarea.setSelectionRange(start + before.length, end + before.length);
-    }, 0);
+      textarea.scrollTop = scrollTop;
+    });
   };
 
   const insertList = (type: "bullet" | "number") => {
@@ -24,16 +26,18 @@ export function MarkdownEditor({ name, value, onChange, placeholder }: { name: s
     if (!textarea) return;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
+    const scrollTop = textarea.scrollTop;
     const selected = value.substring(start, end);
     
     if (!selected) {
       const prefix = type === "bullet" ? "- " : "1. ";
       const newValue = value.substring(0, start) + "\n" + prefix + value.substring(end);
       onChange(newValue);
-      setTimeout(() => {
-        textarea.focus();
+      requestAnimationFrame(() => {
+        textarea.focus({ preventScroll: true });
         textarea.setSelectionRange(start + 1 + prefix.length, start + 1 + prefix.length);
-      }, 0);
+        textarea.scrollTop = scrollTop;
+      });
       return;
     }
 
@@ -46,10 +50,11 @@ export function MarkdownEditor({ name, value, onChange, placeholder }: { name: s
     const replacement = newLines.join('\n');
     const newValue = value.substring(0, start) + replacement + value.substring(end);
     onChange(newValue);
-    setTimeout(() => {
-      textarea.focus();
+    requestAnimationFrame(() => {
+      textarea.focus({ preventScroll: true });
       textarea.setSelectionRange(start, start + replacement.length);
-    }, 0);
+      textarea.scrollTop = scrollTop;
+    });
   };
 
   return (
@@ -73,7 +78,13 @@ export function MarkdownEditor({ name, value, onChange, placeholder }: { name: s
           <Quote className="size-4" />
         </Button>
         <div className="w-px h-4 bg-border mx-1" />
-        <Button type="button" variant="outline" size="sm" className="h-8 gap-2 px-3 text-emerald-600 border-emerald-200 bg-emerald-50 hover:bg-emerald-100" onClick={() => insertText('\n<div dir="rtl" className="font-arabic text-xl leading-loose text-right my-5">\n', '\n</div>\n')} title="Insert Arabic text block (Right to Left)">
+        <Button type="button" variant="outline" size="sm" className="h-8 gap-2 px-3 text-red-600 border-red-200 bg-red-50 hover:bg-red-100" onClick={() => insertText('<span class="text-red-600">', '</span>')} title="Hadith (Red)">
+          Hadith (Red)
+        </Button>
+        <Button type="button" variant="outline" size="sm" className="h-8 gap-2 px-3 text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100" onClick={() => insertText('<span class="text-blue-600">', '</span>')} title="Quran (Blue)">
+          Quran (Blue)
+        </Button>
+        <Button type="button" variant="outline" size="sm" className="h-8 gap-2 px-3 text-emerald-600 border-emerald-200 bg-emerald-50 hover:bg-emerald-100" onClick={() => insertText('\n<div dir="rtl" class="font-arabic text-xl leading-loose text-right my-5">\n', '\n</div>\n')} title="Insert Arabic text block (Right to Left)">
           <Languages className="size-4" /> Arabic Block (RTL)
         </Button>
       </div>

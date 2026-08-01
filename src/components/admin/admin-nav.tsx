@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, FileQuestion, Images, LayoutDashboard, Settings } from "lucide-react";
+import { BookOpen, FileQuestion, Images, LayoutDashboard, PlayCircle, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -11,6 +11,8 @@ const navItems = [
   { label: "New Article", href: "/admin/articles/new", icon: BookOpen },
   { label: "Fatwas", href: "/admin/fatwas", icon: FileQuestion },
   { label: "New Fatwa", href: "/admin/fatwas/new", icon: FileQuestion },
+  { label: "Classes", href: "/admin/classes", icon: PlayCircle },
+  { label: "New Class", href: "/admin/classes/new", icon: PlayCircle },
   { label: "Media", href: "/admin/media", icon: Images },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];

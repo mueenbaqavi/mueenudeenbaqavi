@@ -1,4 +1,4 @@
-import { softDeleteArticleAction } from "@/app/admin/_actions/content-actions";
+import { deleteArticleAction } from "@/app/admin/_actions/content-actions";
 import { ContentFilterBar } from "@/components/admin/content-filter-bar";
 import { ContentListTable } from "@/components/admin/content-list-table";
 import { PageHero } from "@/components/sections/page-hero";
@@ -25,7 +25,7 @@ export default async function AdminArticlesPage({
       <PageHero title="Manage Articles" description="Drafts, scheduled posts, published articles, SEO scores, views, edit entry points, and soft-delete workflow." />
       <section className="container grid gap-6 py-10">
         <ContentFilterBar basePath="/admin/articles" createPath="/admin/articles/new" activeStatus={activeStatus} />
-        <ContentListTable rows={rows} basePath="/admin/articles" publicBasePath="/articles" deleteAction={softDeleteArticleAction} />
+        <ContentListTable rows={rows} basePath="/admin/articles" publicBasePath="/articles" deleteAction={deleteArticleAction} />
       </section>
     </>
   );

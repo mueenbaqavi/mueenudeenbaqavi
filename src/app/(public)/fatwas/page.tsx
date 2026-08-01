@@ -11,19 +11,57 @@ import { createMetadata, siteConfig } from "@/lib/site";
 
 export const metadata = createMetadata({ title: "ഫത്വകൾ", path: "/fatwas" });
 
-export default async function FatwasPage() {
-  const fatwas = await listPublishedFatwas();
+export default async function FatwasPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+  const { category } = await searchParams;
+  const allFatwas = await listPublishedFatwas();
+  
+  const uniqueCategories = Array.from(new Set(allFatwas.map(f => f.category))).filter(Boolean);
+  const fatwas = category ? allFatwas.filter(f => f.category === category) : allFatwas;
 
   return (
     <>
       <PageHero title="ഫത്വകൾ" description="ചോദ്യം, മറുപടി, നമ്പർ, വിഭാഗം, ടാഗുകൾ, തീയതി, അറ്റാച്ച്മെന്റ്, PDF, പ്രിന്റ്, related fatwas എന്നിവയോടെ." />
       <section className="container py-12">
         <div className="relative"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input className="pl-10" placeholder="ഫത്വ നമ്പർ, വിഷയം, വിഭാഗം തിരയുക" /></div>
+        
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Link href="/fatwas">
+            <Badge className={!category ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}>
+              All
+            </Badge>
+          </Link>
+          {uniqueCategories.map((c) => (
+            <Link key={c} href={`/fatwas?category=${encodeURIComponent(c)}`}>
+              <Badge className={category === c ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}>
+                {c}
+              </Badge>
+            </Link>
+          ))}
+        </div>
+
         <div className="mt-8 grid gap-5">
-          {fatwas.length > 0 ? fatwas.map((fatwa) => (
-            <Card key={fatwa.number}>
-              <CardHeader><div className="flex flex-wrap items-center gap-2"><Badge>{fatwa.number}</Badge><Badge>{fatwa.category}</Badge>{fatwa.tags.map((tag) => <Badge key={tag} className="bg-accent/15 text-accent">{tag}</Badge>)}</div><h2 className="text-2xl font-bold"><Link href={`/fatwas/${fatwa.slug}`}>{fatwa.title}</Link></h2></CardHeader>
-              <CardContent><p className="font-bold">ചോദ്യം</p><p className="mt-2 leading-8 text-muted-foreground">{fatwa.question}</p><p className="mt-5 font-bold">മറുപടി</p><p className="mt-2 leading-8 text-muted-foreground">{fatwa.answer}</p><div className="mt-6 flex flex-wrap gap-2"><Button size="sm" variant="outline"><Share2 className="size-4" />Share</Button><Button size="sm" variant="outline"><Copy className="size-4" />Copy Link</Button><Button size="sm" variant="outline"><Download className="size-4" />PDF</Button><Button size="sm" variant="outline"><Printer className="size-4" />Print</Button></div></CardContent>
+          {fatwas.length > 0 ? fatwas.map((fatwa: any) => (
+            <Card key={fatwa.number} className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="flex flex-wrap items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">{fatwa.category}</Badge>
+                    {fatwa.tags?.map((tag: string) => <Badge key={tag} className="bg-accent/15 text-accent">{tag}</Badge>)}
+                  </div>
+                  <Badge className="border border-primary/20 bg-transparent text-primary font-mono">{fatwa.number}</Badge>
+                </div>
+                <h2 className="text-2xl font-bold leading-snug">
+                  <Link href={`/fatwas/${fatwa.slug}`} className="hover:text-primary transition-colors">{fatwa.title}</Link>
+                </h2>
+                {fatwa.excerpt && (
+                  <p className="text-muted-foreground mt-2 leading-relaxed">{fatwa.excerpt}</p>
+                )}
+              </CardHeader>
+              <CardContent>
+                <Button size="sm" asChild className="mt-2">
+                  <Link href={`/fatwas/${fatwa.slug}`}>Read More</Link>
+                </Button>
+              </CardContent>
             </Card>
           )) : <EmptyState />}
         </div>

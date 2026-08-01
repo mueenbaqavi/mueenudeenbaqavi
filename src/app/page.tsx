@@ -91,25 +91,46 @@ export default async function Home() {
           <SectionHeading title="പുതിയ ഫത്വകൾ" description="ചോദ്യവും മറുപടിയും, വിഭാഗം, ടാഗുകൾ, PDF, പ്രിന്റ്, ഷെയർ സൗകര്യങ്ങളോടെ." />
           <div className="mt-6 grid gap-4">
             {recentFatwas.length > 0 ? recentFatwas.map((fatwa) => (
-              <Card key={fatwa.number}>
-                <CardHeader>
-                  <div className="flex items-center justify-between gap-3">
-                    <Badge>{fatwa.number}</Badge>
-                    <span className="text-sm text-muted-foreground">{fatwa.readTime}</span>
-                  </div>
-                  <h3 className="text-xl font-bold">{fatwa.title}</h3>
-                </CardHeader>
-                <CardContent><p className="leading-8 text-muted-foreground">{fatwa.question}</p></CardContent>
-              </Card>
+              <Link href={`/fatwas/${fatwa.slug}`} key={fatwa.number} className="block group h-full">
+                <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/50 group-hover:-translate-y-1">
+                  <CardHeader>
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <Badge className="border border-primary/20 bg-transparent text-primary font-mono">{fatwa.number}</Badge>
+                      <Badge className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">{fatwa.category}</Badge>
+                    </div>
+                    <h3 className="text-xl font-bold leading-snug group-hover:text-primary transition-colors">
+                      {fatwa.title}
+                    </h3>
+                  </CardHeader>
+                  <CardContent className="flex flex-col flex-grow">
+                    <p className="leading-relaxed text-muted-foreground line-clamp-3 flex-grow">
+                      {fatwa.excerpt || fatwa.question}
+                    </p>
+                    <div className="mt-4 text-sm font-bold text-primary flex items-center gap-1 group-hover:underline underline-offset-4">
+                      .....read more
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             )) : <EmptyState />}
           </div>
         </div>
         <div>
-          <SectionHeading title="ക്ലാസുകളും കോഴ്സുകളും" description="വിഷയങ്ങൾ, പുരോഗതി, യോഗ്യത, അപേക്ഷ എന്നിവ അഡ്മിനിൽ നിന്ന് നിയന്ത്രിക്കാവുന്ന രീതിയിൽ." />
+          <div className="flex items-center justify-between">
+            <SectionHeading title="ക്ലാസുകളും കോഴ്സുകളും" description="വിഷയങ്ങൾ, പുരോഗതി, യോഗ്യത, അപേക്ഷ എന്നിവ അഡ്മിനിൽ നിന്ന് നിയന്ത്രിക്കാവുന്ന രീതിയിൽ." />
+            <Link href="/classes" className="inline-flex shrink-0 items-center gap-1 font-bold text-primary hover:underline underline-offset-4">എല്ലാം <ArrowRight className="size-4" /></Link>
+          </div>
           <div className="mt-6 grid gap-4">
             {recentClassSubjects.length === 0 && recentCourses.length === 0 && <EmptyState />}
             {recentClassSubjects.map((item) => (
-              <Card key={item.subject}><CardContent className="pt-5"><h3 className="font-bold">{item.subject}</h3><p className="mt-2 text-sm text-muted-foreground">{item.classes} ക്ലാസുകൾ · {item.progress}% പൂർത്തിയായി</p></CardContent></Card>
+              <Link key={item.slug} href={`/classes/${item.slug}`} className="block group">
+                <Card className="transition-all duration-300 hover:shadow-md hover:border-primary/50 group-hover:-translate-y-1">
+                  <CardContent className="pt-5">
+                    <h3 className="font-bold group-hover:text-primary transition-colors">{item.subject}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{item.classes} ക്ലാസുകൾ</p>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
             {recentCourses.map((course) => (
               <Card key={course.title}><CardContent className="pt-5"><h3 className="font-bold">{course.title}</h3><p className="mt-2 text-sm text-muted-foreground">{course.duration} · {course.eligibility}</p></CardContent></Card>

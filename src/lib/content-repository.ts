@@ -33,6 +33,8 @@ type FatwaRow = {
   fatwa_number: string;
   question: string;
   answer: string;
+  references: string[];
+  given_by: string[];
   content_entries: ContentEntryRow | null;
 };
 
@@ -120,7 +122,7 @@ export async function listPublishedFatwas() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
-    .select("fatwa_number, question, answer, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
+    .select("fatwa_number, question, answer, references, given_by, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
     .eq("content_entries.kind", "fatwa")
     .eq("content_entries.status", "published")
     .is("content_entries.deleted_at", null)
@@ -136,11 +138,14 @@ export async function listPublishedFatwas() {
       slug: row.content_entries.slug,
       question: row.question,
       answer: row.answer,
+      references: row.references ?? [],
+      givenBy: row.given_by ?? ["മുഈനുദ്ദീൻ ബാഖവി"],
       category: row.content_entries.categories?.name ?? "General",
       tags: [],
       date: row.content_entries.published_at ?? new Date().toISOString(),
       views: row.content_entries.views_count ?? 0,
       readTime: `${row.content_entries.read_time_minutes ?? 1} മിനിറ്റ്`,
+      excerpt: row.content_entries.excerpt ?? "",
     }];
   });
 }
@@ -149,7 +154,7 @@ export async function getPublishedFatwaBySlug(slug: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fatwas")
-    .select("fatwa_number, question, answer, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
+    .select("fatwa_number, question, answer, references, given_by, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
     .eq("content_entries.kind", "fatwa")
     .eq("content_entries.status", "published")
     .eq("content_entries.slug", slug)
@@ -166,6 +171,8 @@ export async function getPublishedFatwaBySlug(slug: string) {
     slug: row.content_entries.slug,
     question: row.question,
     answer: row.answer,
+    references: row.references ?? [],
+    givenBy: row.given_by ?? ["മുഈനുദ്ദീൻ ബാഖവി"],
     category: row.content_entries.categories?.name ?? "General",
     tags: [],
     date: row.content_entries.published_at ?? new Date().toISOString(),
@@ -238,18 +245,26 @@ export async function listClassSubjects() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("class_subjects")
-    .select("title, slug, description, youtube_playlists(classes_count, progress_percent)")
+    .select("title, slug, description, youtube_playlists(youtube_playlist_id, classes_count, progress_percent)")
     .is("deleted_at", null)
     .order("sort_order", { ascending: true });
 
   if (error || !data?.length) return [];
-  return (data as unknown as ClassSubjectRow[]).map((row) => {
+  return (data as any[]).map((row) => {
     const playlist = row.youtube_playlists?.[0];
     return {
       subject: row.title,
+      slug: row.slug,
+      description: row.description ?? "",
       playlist: "YouTube Playlist",
+      youtubePlaylistId: playlist?.youtube_playlist_id ?? "",
       classes: playlist?.classes_count ?? 0,
       progress: playlist?.progress_percent ?? 0,
     };
   });
+}
+
+export async function getClassSubjectBySlug(slug: string) {
+  const subjects = await listClassSubjects();
+  return subjects.find((s) => s.slug === slug) ?? null;
 }

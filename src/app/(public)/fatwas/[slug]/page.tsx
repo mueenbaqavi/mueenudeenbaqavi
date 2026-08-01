@@ -62,14 +62,17 @@ export default async function FatwaDetailPage({ params }: PageProps) {
       />
       <section className="border-b bg-muted/40 py-12">
         <div className="container max-w-4xl">
-          <div className="flex flex-wrap gap-2">
-            <Badge>{fatwa.number}</Badge>
-            <Badge>{fatwa.category}</Badge>
-            {fatwa.tags.map((tag) => <Badge key={tag} className="bg-accent/15 text-accent">{tag}</Badge>)}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-2">
+              <Badge className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">{fatwa.category}</Badge>
+              {fatwa.tags?.map((tag) => <Badge key={tag} className="bg-accent/15 text-accent">{tag}</Badge>)}
+            </div>
+            <Badge className="border border-primary/20 bg-transparent text-primary font-mono text-base px-3 py-1">{fatwa.number}</Badge>
           </div>
-          <h1 className="mt-5 text-4xl font-bold leading-tight md:text-6xl">{fatwa.title}</h1>
+          <h1 className="text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">{fatwa.title}</h1>
           <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-2"><CalendarDays className="size-4" />{formatMalayalamDate(fatwa.date)}</span>
+            <span className="flex items-center gap-2">മറുപടി നൽകിയത്: <strong className="text-foreground">{fatwa.givenBy?.join(", ")}</strong></span>
             <span className="flex items-center gap-2"><Eye className="size-4" />{fatwa.views}</span>
             <span>{fatwa.readTime}</span>
           </div>
@@ -77,16 +80,30 @@ export default async function FatwaDetailPage({ params }: PageProps) {
       </section>
       <article className="container max-w-4xl py-12">
         <div className="rounded-lg border bg-card p-6 shadow-[var(--shadow-card)]">
-          <p className="flex items-center gap-2 font-bold"><FileQuestion className="size-5 text-primary" />ചോദ്യം</p>
-          <p className="mt-3 text-lg leading-9 text-muted-foreground">{fatwa.question}</p>
+          <h2 className="flex items-center gap-2 font-bold mb-4"><FileQuestion className="size-5 text-primary" />ചോദ്യം</h2>
+          <div className="prose-platform text-lg leading-9 text-muted-foreground" dangerouslySetInnerHTML={{ __html: marked.parse(fatwa.question, { breaks: true }) as string }} />
         </div>
         <div className="prose-platform mt-8 rounded-lg border bg-card p-6 shadow-[var(--shadow-card)]">
-          <h2>മറുപടി</h2>
+          <h2 className="flex items-center gap-2 mb-6"><MessageCircle className="size-6 text-primary" />മറുപടി</h2>
           <div dangerouslySetInnerHTML={{ __html: marked.parse(fatwa.answer, { breaks: true }) as string }} />
-          <p>വ്യക്തിഗത സാഹചര്യങ്ങൾ വ്യത്യസ്തമായതിനാൽ പ്രായോഗിക തീരുമാനങ്ങൾക്ക് നേരിട്ട് പണ്ഡിത മാർഗ്ഗനിർദ്ദേശം തേടുന്നത് നല്ലതാണ്.</p>
+          <p className="text-sm mt-8 pt-4 border-t border-border/50 text-muted-foreground">
+            വ്യക്തിഗത സാഹചര്യങ്ങൾ വ്യത്യസ്തമായതിനാൽ പ്രായോഗിക തീരുമാനങ്ങൾക്ക് നേരിട്ട് പണ്ഡിത മാർഗ്ഗനിർദ്ദേശം തേടുന്നത് നല്ലതാണ്.
+          </p>
         </div>
+        
+        {fatwa.references && fatwa.references.length > 0 && (
+          <div className="mt-8 rounded-lg border bg-muted/30 p-6">
+            <h3 className="font-bold mb-4 text-lg">അവലംബങ്ങൾ (References)</h3>
+            <ul className="list-disc list-outside ml-5 space-y-2 text-sm text-muted-foreground">
+              {fatwa.references.map((ref, idx) => (
+                <li key={idx} dangerouslySetInnerHTML={{ __html: marked.parseInline(ref) as string }} />
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className="mt-8">
-          <ShareActions title={fatwa.title} url={url} downloadable />
+          <ShareActions title={fatwa.title} url={url} downloadable={false} />
         </div>
         <RelatedList title="ബന്ധപ്പെട്ട ഫത്വകൾ" items={related} basePath="/fatwas" />
       </article>

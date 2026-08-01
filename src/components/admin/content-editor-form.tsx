@@ -25,6 +25,8 @@ type EditorInitialValue = {
   category?: string;
   author?: string;
   tags?: string;
+  references?: string[];
+  givenBy?: string[];
   status?: "draft" | "scheduled" | "published" | "archived";
   scheduledAt?: string;
   seoTitle?: string;
@@ -63,6 +65,8 @@ export function ContentEditorForm({
   const [scheduledAt, setScheduledAt] = useState(initialValue?.scheduledAt?.split('T')[0] ?? "");
   const [category, setCategory] = useState(initialValue?.category ?? "");
   const [author, setAuthor] = useState(initialValue?.author ?? "മുഈനുദ്ദീൻ ബാഖവി");
+  const [givenBy, setGivenBy] = useState(initialValue?.givenBy?.join(", ") ?? "മുഈനുദ്ദീൻ ബാഖവി");
+  const [references, setReferences] = useState(initialValue?.references?.join(", ") ?? "");
   const [tags, setTags] = useState(initialValue?.tags ?? "");
   
   const [showPreview, setShowPreview] = useState(false);
@@ -85,13 +89,13 @@ export function ContentEditorForm({
         {initialValue?.id ? <input type="hidden" name="id" value={initialValue.id} /> : null}
         {initialValue?.slug ? <input type="hidden" name="previousSlug" value={initialValue.slug} /> : null}
         <div className="grid gap-5">
-          {kind === "fatwa" ? (
+          {kind === "fatwa" && initialValue?.fatwaNumber ? (
             <Input 
               name="fatwaNumber" 
               value={fatwaNumber} 
-              onChange={(e) => setFatwaNumber(e.target.value)} 
-              placeholder="Fatwa number, e.g. MBF-0003" 
-              required 
+              readOnly 
+              className="bg-muted text-muted-foreground"
+              title="Fatwa number is auto-generated and read-only"
             />
           ) : null}
           
@@ -124,14 +128,14 @@ export function ContentEditorForm({
                 className="min-h-40" 
                 required 
               />
-              <Textarea 
-                name="answer" 
-                value={body} 
-                onChange={(event) => setBody(event.target.value)} 
-                placeholder="മറുപടി" 
-                className="min-h-72" 
-                required 
-              />
+              <div className="mt-2">
+                <MarkdownEditor 
+                  name="answer" 
+                  value={body} 
+                  onChange={setBody} 
+                  placeholder="മറുപടി (മാർക്ക്ഡൗൺ ഉപയോഗിക്കാം)" 
+                />
+              </div>
             </>
           ) : (
             <>
@@ -238,35 +242,48 @@ export function ContentEditorForm({
                 )}
               </div>
 
-              <div className="space-y-1 mt-4">
-                <div className="flex justify-between items-center">
-                  <label className="text-sm font-semibold">Author</label>
-                  <button type="button" onClick={() => { setIsNewAuthor(!isNewAuthor); setAuthor(""); }} className="text-xs text-primary font-medium hover:underline">
-                    {isNewAuthor ? "Select Existing" : "+ Add New"}
-                  </button>
+              {kind === "article" ? (
+                <div className="space-y-1 mt-4">
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm font-semibold">Author</label>
+                    <button type="button" onClick={() => { setIsNewAuthor(!isNewAuthor); setAuthor(""); }} className="text-xs text-primary font-medium hover:underline">
+                      {isNewAuthor ? "Select Existing" : "+ Add New"}
+                    </button>
+                  </div>
+                  {isNewAuthor ? (
+                    <Input 
+                      name="author" 
+                      value={author} 
+                      onChange={(e) => setAuthor(e.target.value)} 
+                      placeholder="Type new author..." 
+                      required 
+                    />
+                  ) : (
+                    <select 
+                      name="author" 
+                      value={author} 
+                      onChange={(e) => setAuthor(e.target.value)} 
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                      required
+                    >
+                      <option value="" disabled>Select author...</option>
+                      {authors.map((a) => <option key={a} value={a}>{a}</option>)}
+                      {!authors.includes(author) && author !== "" && <option value={author}>{author}</option>}
+                    </select>
+                  )}
                 </div>
-                {isNewAuthor ? (
+              ) : (
+                <div className="space-y-1 mt-4">
+                  <label className="text-sm font-semibold">Fatwa Given By</label>
                   <Input 
-                    name="author" 
-                    value={author} 
-                    onChange={(e) => setAuthor(e.target.value)} 
-                    placeholder="Type new author..." 
+                    name="givenBy" 
+                    value={givenBy} 
+                    onChange={(e) => setGivenBy(e.target.value)} 
+                    placeholder="Comma separated names..." 
                     required 
                   />
-                ) : (
-                  <select 
-                    name="author" 
-                    value={author} 
-                    onChange={(e) => setAuthor(e.target.value)} 
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                    required
-                  >
-                    <option value="" disabled>Select author...</option>
-                    {authors.map((a) => <option key={a} value={a}>{a}</option>)}
-                    {!authors.includes(author) && author !== "" && <option value={author}>{author}</option>}
-                  </select>
-                )}
-              </div>
+                </div>
+              )}
 
               <div className="space-y-1 mt-4">
                 <label className="text-sm font-semibold">Tags</label>
@@ -277,6 +294,18 @@ export function ContentEditorForm({
                   placeholder="Comma separated..." 
                 />
               </div>
+
+              {kind === "fatwa" && (
+                <div className="space-y-1 mt-4">
+                  <label className="text-sm font-semibold">References</label>
+                  <Input 
+                    name="references" 
+                    value={references} 
+                    onChange={(e) => setReferences(e.target.value)} 
+                    placeholder="Comma separated references..." 
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
         </aside>

@@ -115,7 +115,8 @@ create table public.courses (
   topics text[] not null default '{}',
   instructor text,
   eligibility text,
-  whatsapp_message text
+  whatsapp_message text,
+  cta_buttons jsonb not null default '[]'::jsonb
 );
 
 create table public.class_subjects (

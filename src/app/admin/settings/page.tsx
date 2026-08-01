@@ -14,8 +14,7 @@ export default function SettingsPage() {
       <section className="container grid gap-6 py-10 lg:grid-cols-2">
         <Card><CardContent className="grid gap-4 pt-5"><h2 className="flex items-center gap-2 font-bold"><Globe2 className="size-5 text-primary" />Site Identity</h2><div className="space-y-2"><label className="text-sm text-muted-foreground">Site Name</label><Input defaultValue={siteConfig.name} /></div><div className="space-y-2"><label className="text-sm text-muted-foreground">Domain</label><Input defaultValue={siteConfig.domain} /></div><div className="space-y-2"><label className="text-sm text-muted-foreground">Contact Email</label><Input defaultValue={siteConfig.email} /></div></CardContent></Card>
         <Card><CardContent className="grid gap-4 pt-5"><h2 className="flex items-center gap-2 font-bold"><MessageCircle className="size-5 text-primary" />WhatsApp Configuration</h2><div className="space-y-2"><label className="text-sm text-muted-foreground">WhatsApp Number</label><Input defaultValue={siteConfig.whatsapp} /></div><div className="space-y-2"><label className="text-sm text-muted-foreground">Default Message</label><Input defaultValue="അസ്സലാമു അലൈക്കും. ഒരു ഫത്വ ചോദിക്കാൻ ആഗ്രഹിക്കുന്നു." /></div></CardContent></Card>
-        <Card><CardContent className="grid gap-4 pt-5"><h2 className="flex items-center gap-2 font-bold"><Palette className="size-5 text-primary" />Theme Customization</h2><div className="space-y-2"><label className="text-sm text-muted-foreground">Color Palette</label><Input defaultValue="Emerald / Gold" disabled /></div><div className="space-y-2"><label className="text-sm text-muted-foreground">Primary Font</label><Input defaultValue="Anek Malayalam" disabled /></div></CardContent></Card>
-        <div className="flex items-end justify-end">
+        <div className="flex flex-col lg:col-span-2 items-end justify-end">
           <Button size="lg">Save Settings</Button>
         </div>
       </section>

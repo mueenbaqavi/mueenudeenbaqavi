@@ -8,7 +8,7 @@ import { createMetadata } from "@/lib/site";
 export const metadata = createMetadata({ title: "Manage Fatwas", path: "/admin/fatwas" });
 
 function parseStatus(status?: string): AdminContentStatus | "all" {
-  return status === "draft" || status === "scheduled" || status === "published" || status === "archived" ? status : "all";
+  return status === "draft" || status === "published" ? status : "all";
 }
 
 export default async function AdminFatwasPage({

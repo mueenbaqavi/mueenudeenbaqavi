@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { articleEditorSchema, fatwaEditorSchema } from "@/lib/schemas";
+import { ahluSunnahEditorSchema, articleEditorSchema, bookEditorSchema, courseEditorSchema, fatwaEditorSchema } from "@/lib/schemas";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils";
 
@@ -466,21 +466,23 @@ export async function updateFatwaAction(_: EditorActionState, formData: FormData
   }
 }
 
-async function deleteContent(formData: FormData, kind: "article" | "fatwa") {
+async function deleteContent(formData: FormData, kind: "article" | "fatwa" | "course") {
   const auth = await requireEditor();
   if (!auth.ok) redirect("/login");
 
   const id = getString(formData, "id");
   const slug = getString(formData, "slug");
-  if (!id) throw new Error("Missing content id.");
+  if (!id) throw new Error(`Missing ${kind} id`);
 
   // Delete child relations to avoid Foreign Key constraint errors if CASCADE isn't enabled
   await auth.supabase.from("content_tags").delete().eq("content_id", id);
   await auth.supabase.from("revisions").delete().eq("content_id", id);
   await auth.supabase.from("activity_logs").delete().eq("entity_id", id);
-  
+
   if (kind === "fatwa") {
     await auth.supabase.from("fatwas").delete().eq("content_id", id);
+  } else if (kind === "course") {
+    await auth.supabase.from("courses").delete().eq("content_id", id);
   }
 
   const { error } = await auth.supabase
@@ -492,9 +494,9 @@ async function deleteContent(formData: FormData, kind: "article" | "fatwa") {
   if (error) throw error;
 
   await writeActivity(auth.supabase, auth.userId, `${kind}.deleted`, id);
-  revalidatePath(kind === "article" ? "/admin/articles" : "/admin/fatwas");
-  revalidatePath(kind === "article" ? "/articles" : "/fatwas");
-  if (slug) revalidatePath(kind === "article" ? `/articles/${slug}` : `/fatwas/${slug}`);
+  revalidatePath(kind === "article" ? "/admin/articles" : kind === "course" ? "/admin/courses" : "/admin/fatwas");
+  revalidatePath(kind === "article" ? "/articles" : kind === "course" ? "/courses" : "/fatwas");
+  if (slug) revalidatePath(kind === "article" ? `/articles/${slug}` : kind === "course" ? `/courses/${slug}` : `/fatwas/${slug}`);
 }
 
 export async function deleteArticleAction(formData: FormData) {
@@ -503,6 +505,10 @@ export async function deleteArticleAction(formData: FormData) {
 
 export async function deleteFatwaAction(formData: FormData) {
   await deleteContent(formData, "fatwa");
+}
+
+export async function deleteCourseAction(formData: FormData) {
+  await deleteContent(formData, "course");
 }
 
 export async function createClassSubjectAction(_: EditorActionState, formData: FormData): Promise<EditorActionState> {
@@ -630,4 +636,357 @@ export async function editClassSubjectAction(_: EditorActionState, formData: For
   } catch (error: any) {
     return { status: "error", message: error?.message || "An error occurred." };
   }
+}
+
+export async function createCourseAction(_: EditorActionState, formData: FormData): Promise<EditorActionState> {
+  const auth = await requireEditor();
+  if (!auth.ok) return { status: "error", message: auth.error };
+
+  const parsed = courseEditorSchema.safeParse({
+    title: formData.get("title"),
+    slug: formData.get("slug"),
+    excerpt: formData.get("excerpt"),
+    bodyMarkdown: formData.get("bodyMarkdown"),
+    duration: formData.get("duration"),
+    instructor: formData.get("instructor"),
+    eligibility: formData.get("eligibility"),
+    topics: getCommaArray(formData, "topics"),
+    ctaButtons: JSON.parse(getString(formData, "ctaButtons") || "[]"),
+    status: formData.get("status"),
+    scheduledAt: formData.get("scheduledAt") || undefined,
+  });
+
+  if (!parsed.success) return { status: "error", message: parsed.error.issues.map(i => i.message).join(", ") };
+
+  const data = parsed.data;
+  const coverMediaId = getString(formData, "coverMediaId") || null;
+
+  const { data: contentEntry, error: contentError } = await auth.supabase
+    .from("content_entries")
+    .insert({
+      kind: "course",
+      status: data.status as any,
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      body_markdown: data.bodyMarkdown,
+      cover_media_id: coverMediaId,
+      seo_title: data.title,
+      seo_description: data.excerpt,
+      published_at: data.status === "published" ? new Date().toISOString() : data.scheduledAt ? new Date(data.scheduledAt).toISOString() : null,
+      created_by: auth.userId,
+    })
+    .select("id")
+    .single();
+
+  if (contentError) return { status: "error", message: contentError.message };
+
+  const { error: courseError } = await auth.supabase
+    .from("courses")
+    .insert({
+      content_id: contentEntry.id,
+      duration: data.duration,
+      instructor: data.instructor,
+      eligibility: data.eligibility,
+      topics: data.topics,
+      cta_buttons: data.ctaButtons,
+    });
+
+  if (courseError) return { status: "error", message: courseError.message };
+
+  revalidatePath("/admin/courses");
+  revalidatePath("/courses");
+
+  return { status: "success", message: "Course created successfully.", path: `/admin/courses` };
+}
+
+export async function updateCourseAction(_: EditorActionState, formData: FormData): Promise<EditorActionState> {
+  const auth = await requireEditor();
+  if (!auth.ok) return { status: "error", message: auth.error };
+
+  const id = getString(formData, "id");
+  if (!id) return { status: "error", message: "Missing course ID" };
+
+  const parsed = courseEditorSchema.safeParse({
+    title: formData.get("title"),
+    slug: formData.get("slug"),
+    excerpt: formData.get("excerpt"),
+    bodyMarkdown: formData.get("bodyMarkdown"),
+    duration: formData.get("duration"),
+    instructor: formData.get("instructor"),
+    eligibility: formData.get("eligibility"),
+    topics: getCommaArray(formData, "topics"),
+    ctaButtons: JSON.parse(getString(formData, "ctaButtons") || "[]"),
+    status: formData.get("status"),
+    scheduledAt: formData.get("scheduledAt") || undefined,
+  });
+
+  if (!parsed.success) return { status: "error", message: parsed.error.issues.map(i => i.message).join(", ") };
+
+  const data = parsed.data;
+  const coverMediaId = getString(formData, "coverMediaId") || null;
+
+  try {
+    await writeRevision(auth.supabase, id, auth.userId);
+  } catch (e) {
+    console.error("Failed to write revision:", e);
+  }
+
+  const { error: contentError } = await auth.supabase
+    .from("content_entries")
+    .update({
+      status: data.status as any,
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      body_markdown: data.bodyMarkdown,
+      cover_media_id: coverMediaId,
+      seo_title: data.title,
+      seo_description: data.excerpt,
+      published_at: data.status === "published" ? new Date().toISOString() : data.scheduledAt ? new Date(data.scheduledAt).toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (contentError) return { status: "error", message: contentError.message };
+
+  const { error: courseError } = await auth.supabase
+    .from("courses")
+    .update({
+      duration: data.duration,
+      instructor: data.instructor,
+      eligibility: data.eligibility,
+      topics: data.topics,
+      cta_buttons: data.ctaButtons,
+    })
+    .eq("content_id", id);
+
+  if (courseError) return { status: "error", message: courseError.message };
+
+  revalidatePath("/admin/courses");
+  revalidatePath("/courses");
+  revalidatePath(`/courses/${data.slug}`);
+
+  return { status: "success", message: "Course updated successfully.", path: `/admin/courses` };
+}
+
+export async function createAhluSunnahAction(prevState: EditorActionState, formData: FormData): Promise<EditorActionState> {
+  const auth = await requireEditor();
+  if (!auth.ok) return { ...initialErrorState, message: auth.error };
+
+  const parsed = ahluSunnahEditorSchema.safeParse({
+    title: getString(formData, "title"),
+    slug: getString(formData, "slug"),
+    excerpt: getString(formData, "excerpt") || undefined,
+    bodyMarkdown: getString(formData, "bodyMarkdown"),
+    status: getString(formData, "status"),
+    scheduledAt: formData.get("scheduledAt") || undefined,
+  });
+
+  if (!parsed.success) return { status: "error", message: parsed.error.issues.map(i => i.message).join(", ") };
+
+  const data = parsed.data;
+
+  const { data: inserted, error: contentError } = await auth.supabase
+    .from("content_entries")
+    .insert({
+      author_id: auth.userId,
+      kind: "ahlu_sunnah",
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      body_markdown: data.bodyMarkdown,
+      status: data.status,
+      scheduled_at: data.scheduledAt ? new Date(data.scheduledAt).toISOString() : null,
+    })
+    .select("id")
+    .single();
+
+  if (contentError) {
+    if (contentError.code === "23505") return { status: "error", message: "An entry with this slug already exists." };
+    return { status: "error", message: "Failed to create Ahlu-Sunnah entry." };
+  }
+
+  revalidatePath("/admin/ahlu-sunnah");
+  revalidatePath("/ahlu-sunnah");
+  return { status: "success", message: "Ahlu-Sunnah entry created successfully.", path: "/admin/ahlu-sunnah" };
+}
+
+export async function updateAhluSunnahAction(prevState: EditorActionState, formData: FormData): Promise<EditorActionState> {
+  const auth = await requireEditor();
+  if (!auth.ok) return { ...initialErrorState, message: auth.error };
+
+  const id = getString(formData, "id");
+  if (!id) return { status: "error", message: "ID is required for update." };
+
+  const parsed = ahluSunnahEditorSchema.safeParse({
+    title: getString(formData, "title"),
+    slug: getString(formData, "slug"),
+    excerpt: getString(formData, "excerpt") || undefined,
+    bodyMarkdown: getString(formData, "bodyMarkdown"),
+    status: getString(formData, "status"),
+    scheduledAt: formData.get("scheduledAt") || undefined,
+  });
+
+  if (!parsed.success) return { status: "error", message: parsed.error.issues.map(i => i.message).join(", ") };
+
+  const data = parsed.data;
+
+  const { error: contentError } = await auth.supabase
+    .from("content_entries")
+    .update({
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      body_markdown: data.bodyMarkdown,
+      status: data.status,
+      scheduled_at: data.scheduledAt ? new Date(data.scheduledAt).toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("kind", "ahlu_sunnah");
+
+  if (contentError) {
+    if (contentError.code === "23505") return { status: "error", message: "An entry with this slug already exists." };
+    return { status: "error", message: "Failed to update Ahlu-Sunnah entry." };
+  }
+
+  revalidatePath("/admin/ahlu-sunnah");
+  revalidatePath("/ahlu-sunnah");
+  revalidatePath(`/ahlu-sunnah/${data.slug}`);
+  return { status: "success", message: "Ahlu-Sunnah entry updated successfully.", path: "/admin/ahlu-sunnah" };
+}
+
+export async function deleteAhluSunnahAction(formData: FormData) {
+  const auth = await requireEditor();
+  if (!auth.ok) return { status: "error", message: auth.error };
+
+  const id = getString(formData, "id");
+  if (!id) return { status: "error", message: "ID is required." };
+
+  const { error } = await auth.supabase
+    .from("content_entries")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("kind", "ahlu_sunnah");
+
+  if (error) return { status: "error", message: "Failed to delete entry." };
+
+  revalidatePath("/admin/ahlu-sunnah");
+  revalidatePath("/ahlu-sunnah");
+  return { status: "success", message: "Entry deleted successfully." };
+}
+
+export async function createBookAction(state: EditorActionState, formData: FormData) {
+  const auth = await requireEditor();
+  if (!auth.ok) return { status: "error" as const, message: auth.error };
+
+  const parsed = bookEditorSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { status: "error" as const, message: parsed.error.issues.map(i => i.message).join(", ") };
+
+  const data = parsed.data;
+  const coverMediaId = getString(formData, "coverMediaId") || null;
+  const customAuthorId = await getOrCreateAuthor(auth.supabase, data.author);
+
+  const { data: inserted, error: contentError } = await auth.supabase
+    .from("content_entries")
+    .insert({
+      author_id: auth.userId,
+      kind: "book",
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      body_markdown: data.bodyMarkdown,
+      status: data.status,
+      scheduled_at: data.scheduledAt ? new Date(data.scheduledAt).toISOString() : null,
+      seo_title: data.seoTitle,
+      seo_description: data.seoDescription,
+      cover_media_id: coverMediaId,
+      custom_author_id: customAuthorId,
+    })
+    .select("id")
+    .single();
+
+  if (contentError) return { status: "error" as const, message: "Failed to create book entry." };
+
+  const { error: bookError } = await auth.supabase
+    .from("books")
+    .insert({
+      content_id: inserted.id,
+      purchase_url: data.downloadLink || null,
+    });
+
+  if (bookError) return { status: "error" as const, message: "Failed to save book details." };
+
+  revalidatePath("/admin/books");
+  return { status: "success" as const, message: "Book created successfully.", path: "/admin/books" };
+}
+
+export async function updateBookAction(state: EditorActionState, formData: FormData) {
+  const auth = await requireEditor();
+  if (!auth.ok) return { status: "error" as const, message: auth.error };
+
+  const id = getString(formData, "id");
+  if (!id) return { status: "error" as const, message: "ID is required." };
+
+  const parsed = bookEditorSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { status: "error" as const, message: parsed.error.issues.map(i => i.message).join(", ") };
+
+  const data = parsed.data;
+  const coverMediaId = getString(formData, "coverMediaId") || null;
+  const customAuthorId = await getOrCreateAuthor(auth.supabase, data.author);
+
+  const { error: contentError } = await auth.supabase
+    .from("content_entries")
+    .update({
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      body_markdown: data.bodyMarkdown,
+      status: data.status,
+      scheduled_at: data.scheduledAt ? new Date(data.scheduledAt).toISOString() : null,
+      seo_title: data.seoTitle,
+      seo_description: data.seoDescription,
+      cover_media_id: coverMediaId,
+      custom_author_id: customAuthorId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("kind", "book");
+
+  if (contentError) return { status: "error" as const, message: "Failed to update book entry." };
+
+  const { error: bookError } = await auth.supabase
+    .from("books")
+    .update({
+      purchase_url: data.downloadLink || null,
+    })
+    .eq("content_id", id);
+
+  if (bookError) return { status: "error" as const, message: "Failed to update book details." };
+
+  revalidatePath("/admin/books");
+  revalidatePath("/books");
+  revalidatePath(`/books/${data.slug}`);
+  return { status: "success" as const, message: "Book updated successfully.", path: "/admin/books" };
+}
+
+export async function deleteBookAction(formData: FormData) {
+  const auth = await requireEditor();
+  if (!auth.ok) return { status: "error" as const, message: auth.error };
+
+  const id = getString(formData, "id");
+  if (!id) return { status: "error" as const, message: "ID is required." };
+
+  const { error } = await auth.supabase
+    .from("content_entries")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("kind", "book");
+
+  if (error) return { status: "error" as const, message: "Failed to delete book." };
+
+  revalidatePath("/admin/books");
+  revalidatePath("/books");
+  return { status: "success" as const, message: "Book deleted successfully." };
 }

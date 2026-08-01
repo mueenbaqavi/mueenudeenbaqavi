@@ -67,10 +67,12 @@ export default async function Home() {
 
       <section className="container py-16">
         <SectionHeading title="ജീവചരിത്ര സംഗ്രഹം" description={scholar.biography} />
-        <div className="mt-8 grid gap-4 md:grid-cols-4">
-          {["വിദ്യാഭ്യാസം", "അധ്യാപകർ", "സേവനങ്ങൾ", "ഗ്രന്ഥങ്ങൾ"].map((item) => (
-            <Card key={item}><CardContent className="pt-5 text-lg font-bold">{item}</CardContent></Card>
-          ))}
+        <div className="mt-8 flex items-center justify-center">
+          <Link href="/biography">
+            <Button size="lg" className="rounded-full px-8 text-base">
+              കൂടുതൽ വായിക്കുക <ArrowRight className="ml-2 size-4" />
+            </Button>
+          </Link>
         </div>
       </section>
 
@@ -115,26 +117,44 @@ export default async function Home() {
             )) : <EmptyState />}
           </div>
         </div>
-        <div>
-          <div className="flex items-center justify-between">
-            <SectionHeading title="ക്ലാസുകളും കോഴ്സുകളും" description="വിഷയങ്ങൾ, പുരോഗതി, യോഗ്യത, അപേക്ഷ എന്നിവ അഡ്മിനിൽ നിന്ന് നിയന്ത്രിക്കാവുന്ന രീതിയിൽ." />
-            <Link href="/classes" className="inline-flex shrink-0 items-center gap-1 font-bold text-primary hover:underline underline-offset-4">എല്ലാം <ArrowRight className="size-4" /></Link>
+        <div className="flex flex-col gap-12">
+          <div>
+            <div className="flex items-center justify-between">
+              <SectionHeading title="ക്ലാസുകൾ" description="YouTube പ്ലേലിസ്റ്റ് അടിസ്ഥാന പഠനം" />
+              <Link href="/classes" className="inline-flex shrink-0 items-center gap-1 font-bold text-primary hover:underline underline-offset-4">എല്ലാം <ArrowRight className="size-4" /></Link>
+            </div>
+            <div className="mt-6 grid gap-4">
+              {recentClassSubjects.length === 0 && <EmptyState />}
+              {recentClassSubjects.map((item) => (
+                <Link key={item.slug} href={`/classes/${item.slug}`} className="block group">
+                  <Card className="transition-all duration-300 hover:shadow-md hover:border-primary/50 group-hover:-translate-y-1">
+                    <CardContent className="pt-5">
+                      <h3 className="font-bold group-hover:text-primary transition-colors">{item.subject}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground">{item.classes} ക്ലാസുകൾ</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="mt-6 grid gap-4">
-            {recentClassSubjects.length === 0 && recentCourses.length === 0 && <EmptyState />}
-            {recentClassSubjects.map((item) => (
-              <Link key={item.slug} href={`/classes/${item.slug}`} className="block group">
-                <Card className="transition-all duration-300 hover:shadow-md hover:border-primary/50 group-hover:-translate-y-1">
-                  <CardContent className="pt-5">
-                    <h3 className="font-bold group-hover:text-primary transition-colors">{item.subject}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">{item.classes} ക്ലാസുകൾ</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-            {recentCourses.map((course) => (
-              <Card key={course.title}><CardContent className="pt-5"><h3 className="font-bold">{course.title}</h3><p className="mt-2 text-sm text-muted-foreground">{course.duration} · {course.eligibility}</p></CardContent></Card>
-            ))}
+          <div>
+            <div className="flex items-center justify-between">
+              <SectionHeading title="കോഴ്സുകൾ" description="ഘടനാപരമായ ഓൺലൈൻ പഠനം" />
+              <Link href="/courses" className="inline-flex shrink-0 items-center gap-1 font-bold text-primary hover:underline underline-offset-4">എല്ലാം <ArrowRight className="size-4" /></Link>
+            </div>
+            <div className="mt-6 grid gap-4">
+              {recentCourses.length === 0 && <EmptyState />}
+              {recentCourses.map((course) => (
+                <Link key={course.slug} href={`/courses/${course.slug}`} className="block group">
+                  <Card className="transition-all duration-300 hover:shadow-md hover:border-primary/50 group-hover:-translate-y-1">
+                    <CardContent className="pt-5">
+                      <h3 className="font-bold group-hover:text-primary transition-colors">{course.title}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground">{course.duration} · {course.eligibility}</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>

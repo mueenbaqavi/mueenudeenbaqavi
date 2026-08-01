@@ -14,9 +14,9 @@ export function ContentListTable({
   deleteAction,
 }: {
   rows: AdminContentRow[];
-  basePath: "/admin/articles" | "/admin/fatwas";
-  publicBasePath: "/articles" | "/fatwas";
-  deleteAction: (formData: FormData) => Promise<void>;
+  basePath: string;
+  publicBasePath: string;
+  deleteAction: (formData: FormData) => Promise<any>;
 }) {
   return (
     <Card className="overflow-hidden">

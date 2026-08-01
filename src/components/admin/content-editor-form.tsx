@@ -62,7 +62,6 @@ export function ContentEditorForm({
   const [excerpt, setExcerpt] = useState(initialValue?.excerpt ?? "");
   const [seoTitle, setSeoTitle] = useState(initialValue?.seoTitle ?? "");
   const [status, setStatus] = useState(initialValue?.status ?? "draft");
-  const [scheduledAt, setScheduledAt] = useState(initialValue?.scheduledAt?.split('T')[0] ?? "");
   const [category, setCategory] = useState(initialValue?.category ?? "");
   const [author, setAuthor] = useState(initialValue?.author ?? "മുഈനുദ്ദീൻ ബാഖവി");
   const [givenBy, setGivenBy] = useState(initialValue?.givenBy?.join(", ") ?? "മുഈനുദ്ദീൻ ബാഖവി");
@@ -179,13 +178,6 @@ export function ContentEditorForm({
           <Card>
             <CardContent className="grid gap-4 pt-5">
               <h2 className="font-bold">Publish</h2>
-              <Input 
-                name="scheduledAt" 
-                type="date" 
-                value={scheduledAt} 
-                onChange={(e) => setScheduledAt(e.target.value)} 
-                aria-label="Publish date" 
-              />
               
               <Button type="button" variant="outline" onClick={() => setShowPreview(true)} className="w-full">
                 <Eye className="mr-2 size-4" />Preview

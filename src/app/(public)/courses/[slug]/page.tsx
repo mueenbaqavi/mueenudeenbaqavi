@@ -40,6 +40,11 @@ export default async function CourseDetailPage({ params }: PageProps) {
         <div className="container max-w-4xl">
           <Badge>Course</Badge>
           <h1 className="mt-5 text-4xl font-bold leading-tight md:text-6xl">{course.title}</h1>
+          {course.image && (
+            <div className="mt-8 aspect-[21/9] w-full overflow-hidden rounded-xl bg-muted flex items-center justify-center">
+              <img src={course.image} alt={course.title} className="w-full h-full object-contain" />
+            </div>
+          )}
           <p className="mt-5 text-xl leading-9 text-muted-foreground">{course.description}</p>
         </div>
       </section>
@@ -62,9 +67,21 @@ export default async function CourseDetailPage({ params }: PageProps) {
             <div className="flex items-center gap-3"><Clock className="size-5 text-primary" /><span>{course.duration}</span></div>
             <div className="flex items-center gap-3"><UserRound className="size-5 text-primary" /><span>{course.instructor}</span></div>
             <p className="leading-7 text-muted-foreground">Eligibility: {course.eligibility}</p>
-            <Link href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(`അസ്സലാമു അലൈക്കും. ${course.title} കോഴ്സിലേക്ക് അപേക്ഷിക്കാൻ ആഗ്രഹിക്കുന്നു.`)}`}>
-              <Button className="w-full"><MessageCircle className="size-4" />Apply on WhatsApp</Button>
-            </Link>
+            <div className="mt-4 flex flex-col gap-3">
+              {course.ctaButtons && course.ctaButtons.length > 0 ? (
+                course.ctaButtons.map((btn, i) => (
+                  <Link key={i} href={`https://wa.me/${btn.whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(btn.whatsappMessage)}`}>
+                    <Button className="w-full bg-green-600 hover:bg-green-700">
+                      <MessageCircle className="size-4 mr-2" />{btn.label}
+                    </Button>
+                  </Link>
+                ))
+              ) : (
+                <Link href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(`അസ്സലാമു അലൈക്കും. ${course.title} കോഴ്സിലേക്ക് അപേക്ഷിക്കാൻ ആഗ്രഹിക്കുന്നു.`)}`}>
+                  <Button className="w-full bg-green-600 hover:bg-green-700"><MessageCircle className="size-4 mr-2" />Apply on WhatsApp</Button>
+                </Link>
+              )}
+            </div>
           </CardContent>
         </Card>
       </section>

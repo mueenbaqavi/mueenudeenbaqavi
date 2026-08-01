@@ -4,8 +4,8 @@ import { absoluteUrl } from "@/lib/utils";
 export const siteConfig = {
   name: "മുഈനുദ്ദീൻ ബാഖവി",
   scholarName: "Mueenuddeen Baqavi P",
-  domain: "mueenudeenbaqavi.com",
-  url: "https://mueenudeenbaqavi.com",
+  domain: "mueenudeen.com",
+  url: "https://mueenudeen.com",
   locale: "ml_IN",
   description:
     "മുഈനുദ്ദീൻ ബാഖവിയുടെ ജീവചരിത്രം, ലേഖനങ്ങൾ, ഫത്വകൾ, പുസ്തകങ്ങൾ, ക്ലാസുകൾ, കോഴ്സുകൾ, അഹ്‌ലുസ്സുന്ന ഉള്ളടക്കങ്ങൾ എന്നിവയ്ക്കായുള്ള ഔദ്യോഗിക വിജ്ഞാന പ്ലാറ്റ്ഫോം.",

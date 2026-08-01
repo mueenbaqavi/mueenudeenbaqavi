@@ -27,6 +27,7 @@ type ContentEntryRow = {
   categories: { name: string } | null;
   profiles: { full_name: string } | null;
   authors?: { name: string } | null;
+  media_assets?: { bucket: string; path: string } | null;
 };
 
 type FatwaRow = {
@@ -48,6 +49,7 @@ type CourseRow = {
   topics: string[];
   eligibility: string | null;
   instructor: string | null;
+  cta_buttons: { label: string; whatsappNumber: string; whatsappMessage: string }[];
   content_entries: ContentEntryRow | null;
 };
 
@@ -202,6 +204,7 @@ export async function listPublishedBooks() {
       cover: "/images/book-cover.svg",
       pages: 128, // Currently static fallback if not stored
       status: "Download Available",
+      date: row.content_entries.published_at ?? new Date().toISOString(),
     }];
   });
 }
@@ -215,7 +218,7 @@ export async function listPublishedCourses() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("courses")
-    .select("duration, topics, eligibility, instructor, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
+    .select("duration, topics, eligibility, instructor, cta_buttons, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name), media_assets!cover_media_id(bucket, path))")
     .eq("content_entries.kind", "course")
     .eq("content_entries.status", "published")
     .is("content_entries.deleted_at", null)
@@ -232,6 +235,9 @@ export async function listPublishedCourses() {
       topics: row.topics ?? [],
       eligibility: row.eligibility ?? "Open",
       instructor: row.instructor ?? "മുഈനുദ്ദീൻ ബാഖവി",
+      ctaButtons: row.cta_buttons ?? [],
+      image: row.content_entries.media_assets ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${row.content_entries.media_assets.bucket}/${row.content_entries.media_assets.path}` : null,
+      date: row.content_entries.published_at ?? new Date().toISOString(),
     }];
   });
 }

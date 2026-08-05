@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/utils";
 
 export const siteConfig = {
-  name: "മുഈനുദ്ദീൻ ബാഖവി",
+  name: "മുഈനുദ്ദീൻ ബാഖവി | Mueenuddeen Baqavi",
   scholarName: "Mueenuddeen Baqavi P",
   domain: "mueenudeenbaqavi.com",
   url: "https://mueenudeenbaqavi.com",
@@ -69,6 +69,7 @@ export const organizationJsonLd = {
   "@type": "Organization",
   name: siteConfig.name,
   url: siteConfig.url,
+  logo: `${siteConfig.url}/icon.png`,
   email: siteConfig.email,
 };
 

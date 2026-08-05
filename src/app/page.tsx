@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ContentCard } from "@/components/sections/content-card";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ReadMoreText } from "@/components/home/read-more-text";
 import { siteConfig } from "@/lib/site";
 import { scholar } from "@/lib/constants";
 import { listPublishedArticles, listPublishedFatwas, listPublishedBooks, listPublishedCourses, listClassSubjects } from "@/lib/content-repository";
@@ -31,7 +32,7 @@ export default async function Home() {
           <div>
             <Badge className="bg-accent/15 text-accent">Malayalam Islamic Knowledge Platform</Badge>
             <h1 className="mt-5 max-w-4xl text-4xl font-bold leading-tight md:text-6xl">{scholar.name}</h1>
-            <p className="mt-5 max-w-2xl text-xl leading-10 text-muted-foreground">{scholar.summary}</p>
+            <ReadMoreText text={scholar.summary} />
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/fatwas">
                 <Button size="lg"><Search className="size-4" />ഫത്വ തിരയുക</Button>

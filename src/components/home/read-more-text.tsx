@@ -19,8 +19,8 @@ export function ReadMoreText({ text }: { text: string }) {
       </p>
       {text.length > cutoffIndex && cutoffIndex > "വെബ്സൈറ്റിലേക്കു സ്വാഗതം.".length - 1 && (
         <Button 
-          variant="link" 
-          className="p-0 h-auto font-bold text-primary mt-2 text-base" 
+          variant="ghost" 
+          className="p-0 h-auto font-bold text-primary mt-2 text-base hover:bg-transparent" 
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? (

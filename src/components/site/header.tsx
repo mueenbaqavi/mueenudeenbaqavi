@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MobileNav } from "@/components/site/mobile-nav";
@@ -26,9 +25,6 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b bg-background">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3 font-bold">
-          <span className="relative size-10 overflow-hidden rounded-md border bg-background">
-            <Image src="/icon.png" alt="" fill sizes="40px" className="object-contain p-1" priority />
-          </span>
           <span className="leading-tight">
             <span className="block text-base">{siteConfig.name}</span>
             <span className="block text-xs font-medium text-muted-foreground">Official Knowledge Platform</span>

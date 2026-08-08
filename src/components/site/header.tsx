@@ -27,7 +27,7 @@ export function SiteHeader() {
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3 font-bold">
           <span className="relative size-10 overflow-hidden rounded-md border bg-background">
-            <Image src="/icon1.png" alt="" fill sizes="40px" className="object-contain p-1" priority />
+            <Image src="/icon.png" alt="" fill sizes="40px" className="object-contain p-1" priority />
           </span>
           <span className="leading-tight">
             <span className="block text-base">{siteConfig.name}</span>

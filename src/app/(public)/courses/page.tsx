@@ -8,13 +8,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { listPublishedCourses } from "@/lib/content-repository";
 import { createMetadata, siteConfig } from "@/lib/site";
 
-export const metadata = createMetadata({ title: "കോഴ്സുകൾ", path: "/courses" });
+export const metadata = createMetadata({ title: "Courses", path: "/courses" });
 
 export default async function CoursesPage() {
   const courses = await listPublishedCourses();
   return (
     <>
-      <PageHero title="കോഴ്സുകൾ" description="Course image, duration, topics, instructor, eligibility, WhatsApp apply എന്നിവയ്ക്ക് തയ്യാറായ പഠന ഘടന." />
+      <PageHero title="Courses" description="Course image, duration, topics, instructor, eligibility, WhatsApp apply എന്നിവയ്ക്ക് തയ്യാറായ പഠന ഘടന." />
       <section className="container grid gap-6 py-12 md:grid-cols-2">
         {courses.length > 0 ? courses.map((course) => (
           <Card key={course.title}>

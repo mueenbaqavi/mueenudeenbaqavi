@@ -8,14 +8,14 @@ import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const nav = [
-  ["ജീവചരിത്രം", "/biography"],
-  ["ലേഖനങ്ങൾ", "/articles"],
-  ["അഹ്‌ലുസ്സുന്ന", "/ahlu-sunnah"],
-  ["ഫത്‌വകൾ", "/fatwas"],
-  ["ക്ലാസുകൾ", "/classes"],
-  ["കോഴ്സുകൾ", "/courses"],
-  ["പുസ്തകങ്ങൾ", "/books"],
-  ["ബന്ധപ്പെടുക", "/contact"],
+  ["Biography", "/biography"],
+  ["Articles", "/articles"],
+  ["Ahlu Sunnah", "/ahlu-sunnah"],
+  ["Fatwas", "/fatwas"],
+  ["Classes", "/classes"],
+  ["Courses", "/courses"],
+  ["Books", "/books"],
+  ["Contact", "/contact"],
 ];
 
 export function SiteHeader() {

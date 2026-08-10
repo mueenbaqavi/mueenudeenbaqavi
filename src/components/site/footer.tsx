@@ -8,19 +8,19 @@ export function SiteFooter() {
       <div className="container grid gap-10 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <h2 className="text-xl font-bold">{siteConfig.name}</h2>
-          <p className="mt-3 max-w-xl leading-8 text-muted-foreground">{siteConfig.description}</p>
+          {/* <p className="mt-3 max-w-xl leading-8 text-muted-foreground">{siteConfig.description}</p> */}
         </div>
         <div>
-          <h3 className="font-bold">വിഭാഗങ്ങൾ</h3>
+          <h3 className="font-bold">Categories</h3>
           <div className="mt-4 grid gap-2 text-sm text-muted-foreground">
-            <Link href="/articles">ലേഖനങ്ങൾ</Link>
-            <Link href="/fatwas">ഫത്‌വകൾ</Link>
-            <Link href="/ahlu-sunnah">അഹ്‌ലുസ്സുന്ന</Link>
-            <Link href="/admin">അഡ്മിൻ</Link>
+            <Link href="/articles">Articles</Link>
+            <Link href="/fatwas">Fatwas</Link>
+            <Link href="/ahlu-sunnah">Ahlu Sunnah</Link>
+            <Link href="/admin">Admin</Link>
           </div>
         </div>
         <div>
-          <h3 className="font-bold">ബന്ധപ്പെടുക</h3>
+          <h3 className="font-bold">Contact Us</h3>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
             <span className="flex items-center gap-2"><MapPin className="size-4" />{siteConfig.address}</span>
             <span className="flex items-center gap-2"><Phone className="size-4" />{siteConfig.phone}</span>

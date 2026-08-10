@@ -24,13 +24,13 @@ export function MobileNav({ nav }: { nav: string[][] }) {
   }, [isOpen]);
 
   const mobileNav = [
-    ["ഹോം", "/"],
+    ["Home", "/"],
     ...nav.filter(([, href]) => href !== "/")
   ];
 
   return (
     <div className="lg:hidden">
-      <Button size="icon" variant="ghost" onClick={() => setIsOpen(true)} aria-label="മെനു തുറക്കുക">
+      <Button size="icon" variant="ghost" onClick={() => setIsOpen(true)} aria-label="Open menu">
         <Menu className="size-5" />
       </Button>
 
@@ -46,8 +46,8 @@ export function MobileNav({ nav }: { nav: string[][] }) {
           {/* Drawer */}
           <div className="relative z-50 h-full w-full max-w-sm border-l bg-background p-6 shadow-lg animate-in slide-in-from-right-full duration-200">
             <div className="flex items-center justify-between">
-              <span className="font-bold">മെനു</span>
-              <Button size="icon" variant="ghost" onClick={() => setIsOpen(false)} aria-label="മെനു അടക്കുക">
+              <span className="font-bold">Menu</span>
+              <Button size="icon" variant="ghost" onClick={() => setIsOpen(false)} aria-label="Close menu">
                 <X className="size-5" />
               </Button>
             </div>

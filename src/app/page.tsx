@@ -46,10 +46,10 @@ export default async function Home() {
             <div className="absolute inset-x-6 top-0 h-1 rounded-full bg-accent" />
             <div className="grid gap-4">
               {[
-                ["ലേഖനങ്ങൾ", "പഠനയോഗ്യമായ വിശകലനങ്ങൾ", BookMarked],
-                ["ഫത്‌വകൾ", "സൂക്ഷ്മമായ മതപരമായ മറുപടികൾ", Landmark],
-                ["ക്ലാസുകൾ", "YouTube പ്ലേലിസ്റ്റ് അടിസ്ഥാന പഠനം", PlayCircle],
-                ["കോഴ്സുകൾ", "ഘടനാപരമായ ഓൺലൈൻ പഠനം", GraduationCap],
+                ["Articles", "പഠനയോഗ്യമായ വിശകലനങ്ങൾ", BookMarked],
+                ["Fatwas", "സൂക്ഷ്മമായ മതപരമായ മറുപടികൾ", Landmark],
+                ["Classes", "YouTube പ്ലേലിസ്റ്റ് അടിസ്ഥാന പഠനം", PlayCircle],
+                ["Courses", "ഘടനാപരമായ ഓൺലൈൻ പഠനം", GraduationCap],
               ].map(([title, text, Icon]) => (
                 <div key={title as string} className="flex gap-4 rounded-lg border bg-background p-4">
                   <span className="grid size-11 shrink-0 place-items-center rounded-md bg-secondary text-primary">
@@ -67,7 +67,7 @@ export default async function Home() {
       </section>
 
       <section className="container py-16">
-        <SectionHeading title="ജീവചരിത്ര സംഗ്രഹം" description={scholar.biography} />
+        <SectionHeading title="Biography" description={scholar.biography} />
         <div className="mt-8 flex items-center justify-center">
           <Link href="/biography">
             <Button size="lg" className="rounded-full px-8 text-base">
@@ -80,7 +80,7 @@ export default async function Home() {
       <section className="bg-muted/40 py-16">
         <div className="container">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <SectionHeading title="പ്രധാന ലേഖനങ്ങൾ" description="വായന, ഗവേഷണം, പങ്കുവെക്കൽ എന്നിവയ്ക്കായി സജ്ജമാക്കിയ പുതിയ ഉള്ളടക്കങ്ങൾ." />
+            <SectionHeading title="Articles" description="വായന, ഗവേഷണം, പങ്കുവെക്കൽ എന്നിവയ്ക്കായി സജ്ജമാക്കിയ പുതിയ ഉള്ളടക്കങ്ങൾ." />
             <Link href="/articles" className="inline-flex items-center gap-2 font-bold text-primary">എല്ലാം കാണുക <ArrowRight className="size-4" /></Link>
           </div>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
@@ -91,7 +91,7 @@ export default async function Home() {
 
       <section className="container grid gap-10 py-16 lg:grid-cols-2">
         <div>
-          <SectionHeading title="പുതിയ ഫത്‌വകൾ" description="ചോദ്യവും മറുപടിയും, വിഭാഗം, ടാഗുകൾ, PDF, പ്രിന്റ്, ഷെയർ സൗകര്യങ്ങളോടെ." />
+          <SectionHeading title="New Fatwas" description="ചോദ്യവും മറുപടിയും, വിഭാഗം, ടാഗുകൾ, PDF, പ്രിന്റ്, ഷെയർ സൗകര്യങ്ങളോടെ." />
           <div className="mt-6 grid gap-4">
             {recentFatwas.length > 0 ? recentFatwas.map((fatwa) => (
               <Link href={`/fatwas/${fatwa.slug}`} key={fatwa.number} className="block group h-full">
@@ -121,7 +121,7 @@ export default async function Home() {
         <div className="flex flex-col gap-12">
           <div>
             <div className="flex items-center justify-between">
-              <SectionHeading title="ക്ലാസുകൾ" description="YouTube പ്ലേലിസ്റ്റ് അടിസ്ഥാന പഠനം" />
+              <SectionHeading title="Classes" description="YouTube പ്ലേലിസ്റ്റ് അടിസ്ഥാന പഠനം" />
               <Link href="/classes" className="inline-flex shrink-0 items-center gap-1 font-bold text-primary hover:underline underline-offset-4">എല്ലാം <ArrowRight className="size-4" /></Link>
             </div>
             <div className="mt-6 grid gap-4">
@@ -131,7 +131,7 @@ export default async function Home() {
                   <Card className="transition-all duration-300 hover:shadow-md hover:border-primary/50 group-hover:-translate-y-1">
                     <CardContent className="pt-5">
                       <h3 className="font-bold group-hover:text-primary transition-colors">{item.subject}</h3>
-                      <p className="mt-2 text-sm text-muted-foreground">{item.classes} ക്ലാസുകൾ</p>
+                      <p className="mt-2 text-sm text-muted-foreground">{item.classes} Classes</p>
                     </CardContent>
                   </Card>
                 </Link>
@@ -140,7 +140,7 @@ export default async function Home() {
           </div>
           <div>
             <div className="flex items-center justify-between">
-              <SectionHeading title="കോഴ്സുകൾ" description="ഘടനാപരമായ ഓൺലൈൻ പഠനം" />
+              <SectionHeading title="Courses" description="ഘടനാപരമായ ഓൺലൈൻ പഠനം" />
               <Link href="/courses" className="inline-flex shrink-0 items-center gap-1 font-bold text-primary hover:underline underline-offset-4">എല്ലാം <ArrowRight className="size-4" /></Link>
             </div>
             <div className="mt-6 grid gap-4">
@@ -161,7 +161,7 @@ export default async function Home() {
       </section>
 
       <section className="container py-16">
-        <SectionHeading title="പുസ്തകങ്ങൾ" description="കവർ, വിവരണം, PDF preview, വാങ്ങൽ, ഡൗൺലോഡ് സൗകര്യങ്ങൾക്കുള്ള ഘടന." />
+        <SectionHeading title="Books" description="കവർ, വിവരണം, PDF preview, വാങ്ങൽ, ഡൗൺലോഡ് സൗകര്യങ്ങൾക്കുള്ള ഘടന." />
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {recentBooks.length > 0 ? recentBooks.map((book) => (
             <Card key={book.title}><CardContent className="pt-5"><Badge>{book.category}</Badge><h3 className="mt-3 text-xl font-bold">{book.title}</h3><p className="mt-2 leading-7 text-muted-foreground">{book.description}</p></CardContent></Card>

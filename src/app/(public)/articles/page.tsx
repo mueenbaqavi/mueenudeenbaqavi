@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { listPublishedArticles } from "@/lib/content-repository";
 import { createMetadata } from "@/lib/site";
 
-export const metadata = createMetadata({ title: "ലേഖനങ്ങൾ", path: "/articles", type: "website" });
+export const metadata = createMetadata({ title: "Articles", path: "/articles", type: "website" });
 
 export default async function ArticlesPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const { category } = await searchParams;
@@ -25,7 +25,7 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
-      <PageHero title="ലേഖനങ്ങൾ" description="Featured layout, filters, categories, reading time, views, share, bookmark, pagination എന്നിവയ്ക്കായി തയ്യാറാക്കിയ ലേഖന വിഭാഗം." />
+      <PageHero title="Articles" description="Featured layout, filters, categories, reading time, views, share, bookmark, pagination എന്നിവയ്ക്കായി തയ്യാറാക്കിയ ലേഖന വിഭാഗം." />
       <section className="container py-12">
         <div className="grid gap-3 rounded-lg border bg-card p-4 md:grid-cols-[1fr_auto]">
           <div className="relative"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input className="pl-10" placeholder="ലേഖനങ്ങൾ തിരയുക" /></div>

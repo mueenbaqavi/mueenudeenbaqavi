@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata, siteConfig } from "@/lib/site";
 
 export const metadata = createMetadata({
-  title: "ജീവചരിത്രം",
+  title: "Biography",
   path: "/biography",
   description:
     "മുഈനുദ്ദീൻ ബാഖവി പിയുടെ ജനനം, കുടുംബം, മതപഠനം, ഉപരിപഠനം, സേവനം, ഗ്രന്ഥങ്ങൾ, പദവികൾ, ബന്ധപ്പെടൽ വിവരങ്ങൾ.",
@@ -49,7 +49,7 @@ export default function BiographyPage() {
   return (
     <>
       <PageHero
-        title="ജീവചരിത്രം"
+        title="Biography"
         description="ദർസ് രംഗത്ത് മികവുറ്റ പണ്ഡിതൻ, അധ്യാപകൻ, ഗ്രന്ഥകാരൻ എന്നീ നിലകളിൽ സേവനം അനുഷ്ഠിക്കുന്ന മുഈനുദ്ദീൻ ബാഖവി പിയുടെ ഔദ്യോഗിക ജീവിതരേഖ."
       />
 

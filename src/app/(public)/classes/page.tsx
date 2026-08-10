@@ -6,14 +6,14 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { listClassSubjects } from "@/lib/content-repository";
 import { createMetadata } from "@/lib/site";
 
-export const metadata = createMetadata({ title: "ക്ലാസുകൾ", path: "/classes", type: "website" });
+export const metadata = createMetadata({ title: "Classes", path: "/classes", type: "website" });
 
 export default async function ClassesPage() {
   const subjects = await listClassSubjects();
 
   return (
     <>
-      <PageHero title="ക്ലാസുകൾ" description="വിവിധ വിഷയങ്ങളിലുള്ള പഠന ക്ലാസുകൾ ഇവിടെ ലഭ്യമാണ്." />
+      <PageHero title="Classes" description="വിവിധ വിഷയങ്ങളിലുള്ള പഠന ക്ലാസുകൾ ഇവിടെ ലഭ്യമാണ്." />
       <section className="container py-16">
         <div className="grid gap-6 md:grid-cols-3">
           {subjects.length === 0 ? (
@@ -34,7 +34,7 @@ export default async function ClassesPage() {
                           {subject.subject}
                         </h3>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {subject.classes} ക്ലാസുകൾ
+                          {subject.classes} Classes
                         </p>
                       </div>
                     </div>

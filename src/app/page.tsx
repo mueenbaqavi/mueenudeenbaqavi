@@ -35,10 +35,10 @@ export default async function Home() {
             <ReadMoreText text={scholar.summary} />
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/fatwas">
-                <Button size="lg"><Search className="size-4" />ഫത്വ തിരയുക</Button>
+                <Button size="lg"><Search className="size-4" />ഫത്‌വ തിരയുക</Button>
               </Link>
               <Link href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("അസ്സലാമു അലൈക്കും. ഒരു ഫത്വ ചോദിക്കാൻ ആഗ്രഹിക്കുന്നു.")}`}>
-                <Button size="lg" variant="outline"><MessageCircle className="size-4" />ഫത്വ ചോദിക്കുക</Button>
+                <Button size="lg" variant="outline"><MessageCircle className="size-4" />ഫത്‌വ ചോദിക്കുക</Button>
               </Link>
             </div>
           </div>
@@ -47,7 +47,7 @@ export default async function Home() {
             <div className="grid gap-4">
               {[
                 ["ലേഖനങ്ങൾ", "പഠനയോഗ്യമായ വിശകലനങ്ങൾ", BookMarked],
-                ["ഫത്വകൾ", "സൂക്ഷ്മമായ മതപരമായ മറുപടികൾ", Landmark],
+                ["ഫത്‌വകൾ", "സൂക്ഷ്മമായ മതപരമായ മറുപടികൾ", Landmark],
                 ["ക്ലാസുകൾ", "YouTube പ്ലേലിസ്റ്റ് അടിസ്ഥാന പഠനം", PlayCircle],
                 ["കോഴ്സുകൾ", "ഘടനാപരമായ ഓൺലൈൻ പഠനം", GraduationCap],
               ].map(([title, text, Icon]) => (
@@ -91,7 +91,7 @@ export default async function Home() {
 
       <section className="container grid gap-10 py-16 lg:grid-cols-2">
         <div>
-          <SectionHeading title="പുതിയ ഫത്വകൾ" description="ചോദ്യവും മറുപടിയും, വിഭാഗം, ടാഗുകൾ, PDF, പ്രിന്റ്, ഷെയർ സൗകര്യങ്ങളോടെ." />
+          <SectionHeading title="പുതിയ ഫത്‌വകൾ" description="ചോദ്യവും മറുപടിയും, വിഭാഗം, ടാഗുകൾ, PDF, പ്രിന്റ്, ഷെയർ സൗകര്യങ്ങളോടെ." />
           <div className="mt-6 grid gap-4">
             {recentFatwas.length > 0 ? recentFatwas.map((fatwa) => (
               <Link href={`/fatwas/${fatwa.slug}`} key={fatwa.number} className="block group h-full">

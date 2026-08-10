@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { listPublishedFatwas } from "@/lib/content-repository";
 import { createMetadata, siteConfig } from "@/lib/site";
 
-export const metadata = createMetadata({ title: "ഫത്വകൾ", path: "/fatwas" });
+export const metadata = createMetadata({ title: "ഫത്‌വകൾ", path: "/fatwas" });
 
 export default async function FatwasPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const { category } = await searchParams;
@@ -20,7 +20,7 @@ export default async function FatwasPage({ searchParams }: { searchParams: Promi
 
   return (
     <>
-      <PageHero title="ഫത്വകൾ" description="ചോദ്യം, മറുപടി, നമ്പർ, വിഭാഗം, ടാഗുകൾ, തീയതി, അറ്റാച്ച്മെന്റ്, PDF, പ്രിന്റ്, related fatwas എന്നിവയോടെ." />
+      <PageHero title="ഫത്‌വകൾ" description="ചോദ്യം, മറുപടി, നമ്പർ, വിഭാഗം, ടാഗുകൾ, തീയതി, അറ്റാച്ച്മെന്റ്, PDF, പ്രിന്റ്, related fatwas എന്നിവയോടെ." />
       <section className="container py-12">
         <div className="relative"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input className="pl-10" placeholder="ഫത്വ നമ്പർ, വിഷയം, വിഭാഗം തിരയുക" /></div>
         

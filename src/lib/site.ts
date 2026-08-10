@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/utils";
 
 export const siteConfig = {
-  name: "മുഈനുദ്ദീൻ ബാഖവി | Mueenuddeen Baqavi",
-  scholarName: "Mueenuddeen Baqavi P",
+  name: "മുഈനുദ്ദീൻ ബാഖവി പി | Mueenudeen Baqavi P",
+  scholarName: "Mueenudeen Baqavi P",
   domain: "mueenudeenbaqavi.com",
   url: "https://mueenudeenbaqavi.com",
   locale: "ml_IN",
   description:
-    "മുഈനുദ്ദീൻ ബാഖവിയുടെ ജീവചരിത്രം, ലേഖനങ്ങൾ, ഫത്വകൾ, പുസ്തകങ്ങൾ, ക്ലാസുകൾ, കോഴ്സുകൾ, അഹ്‌ലുസ്സുന്ന ഉള്ളടക്കങ്ങൾ എന്നിവയ്ക്കായുള്ള ഔദ്യോഗിക വിജ്ഞാന പ്ലാറ്റ്ഫോം.",
+    "ഇസ്ലാമിക പണ്ഡിതനും ഗ്രന്ഥകാരനും കാളികാവ് ക്യാമ്പസ് ശരീഅഃ വിഭാഗം പ്രൊഫസറുമായ മുഈനുദ്ദീൻ ബാഖവി പി. യുടെ ഔദ്യോഗിക വെബ്സൈറ്റിലേക്കു സ്വാഗതം.",
   whatsapp: "919496343397",
   phone: "9496343397",
   email: "mueenbaqavi@gmail.com",

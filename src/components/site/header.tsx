@@ -11,7 +11,7 @@ const nav = [
   ["ജീവചരിത്രം", "/biography"],
   ["ലേഖനങ്ങൾ", "/articles"],
   ["അഹ്‌ലുസ്സുന്ന", "/ahlu-sunnah"],
-  ["ഫത്വകൾ", "/fatwas"],
+  ["ഫത്‌വകൾ", "/fatwas"],
   ["ക്ലാസുകൾ", "/classes"],
   ["കോഴ്സുകൾ", "/courses"],
   ["പുസ്തകങ്ങൾ", "/books"],
@@ -27,7 +27,6 @@ export function SiteHeader() {
         <Link href="/" className="flex items-center gap-3 font-bold">
           <span className="leading-tight">
             <span className="block text-base">{siteConfig.name}</span>
-            <span className="block text-xs font-medium text-muted-foreground">Official Knowledge Platform</span>
           </span>
         </Link>
         <nav aria-label="പ്രധാന നാവിഗേഷൻ" className="hidden items-center gap-1 lg:flex">

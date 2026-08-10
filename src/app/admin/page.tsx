@@ -39,7 +39,7 @@ export default async function AdminPage() {
 
   return (
     <>
-      <PageHero title="Admin Dashboard" description="മുഈനുദ്ദീൻ ബാഖവി വെബ്സൈറ്റിലെ ലേഖനങ്ങൾ, ഫത്വകൾ, ക്ലാസുകൾ, കോഴ്സുകൾ എന്നിവ നിയന്ത്രിക്കാനുള്ള കേന്ദ്രം." />
+      <PageHero title="Admin Dashboard" description="മുഈനുദ്ദീൻ ബാഖവി വെബ്സൈറ്റിലെ ലേഖനങ്ങൾ, ഫത്‌വകൾ, ക്ലാസുകൾ, കോഴ്സുകൾ എന്നിവ നിയന്ത്രിക്കാനുള്ള കേന്ദ്രം." />
       <section className="container py-12">
         <div className="mb-8 flex justify-end">
           <form action={signOutAction}>

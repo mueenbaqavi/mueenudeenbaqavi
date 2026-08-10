@@ -14,7 +14,7 @@ export function SiteFooter() {
           <h3 className="font-bold">വിഭാഗങ്ങൾ</h3>
           <div className="mt-4 grid gap-2 text-sm text-muted-foreground">
             <Link href="/articles">ലേഖനങ്ങൾ</Link>
-            <Link href="/fatwas">ഫത്വകൾ</Link>
+            <Link href="/fatwas">ഫത്‌വകൾ</Link>
             <Link href="/ahlu-sunnah">അഹ്‌ലുസ്സുന്ന</Link>
             <Link href="/admin">അഡ്മിൻ</Link>
           </div>

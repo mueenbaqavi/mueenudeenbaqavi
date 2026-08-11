@@ -12,7 +12,7 @@ export const metadata = createMetadata({
   path: "/biography",
   description:
     "മുഈനുദ്ദീൻ ബാഖവി പിയുടെ ജനനം, കുടുംബം, മതപഠനം, ഉപരിപഠനം, സേവനം, ഗ്രന്ഥങ്ങൾ, പദവികൾ, ബന്ധപ്പെടൽ വിവരങ്ങൾ.",
-  image: "/mueenusta.jpeg",
+  image: "/mueenustad.jpeg",
 });
 
 const books = [
@@ -58,7 +58,7 @@ export default function BiographyPage() {
           <Card className="overflow-hidden">
             <div className="relative aspect-[4/5] bg-secondary">
               <Image
-                src="/mueenusta.jpeg"
+                src="/mueenustad.jpeg"
                 alt="മുഈനുദ്ദീൻ ബാഖവി പി"
                 fill
                 priority

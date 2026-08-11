@@ -16,8 +16,7 @@ export function slugify(input: string) {
 }
 
 export function absoluteUrl(path = "") {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mueenudeenbaqavi.com";
-  return new URL(path, baseUrl).toString();
+  return new URL(path, "https://mueenudeenbaqavi.com").toString();
 }
 
 export function formatMalayalamDate(date: string | Date) {

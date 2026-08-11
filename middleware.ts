@@ -42,9 +42,9 @@ export async function middleware(request: NextRequest) {
     redirectUrl.pathname = "/admin";
     const redirectResponse = NextResponse.redirect(redirectUrl);
     
-    // Propagate cookies to the new redirect response
-    supabaseResponse.cookies.getAll().forEach((cookie) => {
-      redirectResponse.cookies.set(cookie.name, cookie.value);
+    const setCookies = supabaseResponse.headers.getSetCookie();
+    setCookies.forEach((cookie) => {
+      redirectResponse.headers.append("Set-Cookie", cookie);
     });
     redirectResponse.headers.set("Cache-Control", "no-store, max-age=0");
     return redirectResponse;
@@ -56,9 +56,9 @@ export async function middleware(request: NextRequest) {
     redirectUrl.searchParams.set("next", request.nextUrl.pathname);
     const redirectResponse = NextResponse.redirect(redirectUrl);
     
-    // Propagate cookies to the new redirect response
-    supabaseResponse.cookies.getAll().forEach((cookie) => {
-      redirectResponse.cookies.set(cookie.name, cookie.value);
+    const setCookies = supabaseResponse.headers.getSetCookie();
+    setCookies.forEach((cookie) => {
+      redirectResponse.headers.append("Set-Cookie", cookie);
     });
     redirectResponse.headers.set("Cache-Control", "no-store, max-age=0");
     return redirectResponse;

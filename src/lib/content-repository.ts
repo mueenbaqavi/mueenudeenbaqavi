@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabasePublicClient } from "@/lib/supabase/server";
 
 export type ContentItem = {
   id: string;
@@ -78,7 +78,7 @@ function mapContentRow(row: ContentEntryRow, image = "/images/article-emerald.sv
 }
 
 export async function listPublishedArticles() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const { data, error } = await supabase
     .from("content_entries")
     .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name), authors(name)")
@@ -92,13 +92,13 @@ export async function listPublishedArticles() {
 }
 
 export async function getPublishedArticleBySlug(slug: string) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const { data, error } = await supabase
     .from("content_entries")
     .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name), authors(name)")
     .eq("kind", "article")
     .eq("status", "published")
-    .eq("slug", slug)
+    .ilike("slug", decodeURIComponent(slug))
     .is("deleted_at", null)
     .maybeSingle();
 
@@ -107,7 +107,7 @@ export async function getPublishedArticleBySlug(slug: string) {
 }
 
 export async function listPublishedAhluSunnahArticles() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const { data, error } = await supabase
     .from("content_entries")
     .select("title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name)")
@@ -121,7 +121,7 @@ export async function listPublishedAhluSunnahArticles() {
 }
 
 export async function listPublishedFatwas() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const { data, error } = await supabase
     .from("fatwas")
     .select("fatwa_number, question, answer, references, given_by, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
@@ -153,13 +153,13 @@ export async function listPublishedFatwas() {
 }
 
 export async function getPublishedFatwaBySlug(slug: string) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const { data, error } = await supabase
     .from("fatwas")
     .select("fatwa_number, question, answer, references, given_by, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
     .eq("content_entries.kind", "fatwa")
     .eq("content_entries.status", "published")
-    .eq("content_entries.slug", slug)
+    .ilike("content_entries.slug", decodeURIComponent(slug))
     .is("content_entries.deleted_at", null)
     .maybeSingle();
 
@@ -184,7 +184,7 @@ export async function getPublishedFatwaBySlug(slug: string) {
 }
 
 export async function listPublishedBooks() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const { data, error } = await supabase
     .from("books")
     .select("purchase_url, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name))")
@@ -211,11 +211,11 @@ export async function listPublishedBooks() {
 
 export async function getPublishedBookBySlug(slug: string) {
   const books = await listPublishedBooks();
-  return books.find((b) => b.slug === slug) ?? null;
+  return books.find((b) => b.slug.toLowerCase() === decodeURIComponent(slug).toLowerCase()) ?? null;
 }
 
 export async function listPublishedCourses() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const { data, error } = await supabase
     .from("courses")
     .select("duration, topics, eligibility, instructor, cta_buttons, content_entries!inner(title, slug, excerpt, body_markdown, published_at, read_time_minutes, views_count, categories(name), profiles:profiles!content_entries_author_id_fkey(full_name), media_assets!cover_media_id(bucket, path))")
@@ -244,11 +244,11 @@ export async function listPublishedCourses() {
 
 export async function getPublishedCourseBySlug(slug: string) {
   const courses = await listPublishedCourses();
-  return courses.find((c) => c.slug === slug) ?? null;
+  return courses.find((c) => c.slug.toLowerCase() === decodeURIComponent(slug).toLowerCase()) ?? null;
 }
 
 export async function listClassSubjects() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabasePublicClient();
   const { data, error } = await supabase
     .from("class_subjects")
     .select("title, slug, description, youtube_playlists(youtube_playlist_id, classes_count, progress_percent)")
@@ -272,5 +272,5 @@ export async function listClassSubjects() {
 
 export async function getClassSubjectBySlug(slug: string) {
   const subjects = await listClassSubjects();
-  return subjects.find((s) => s.slug === slug) ?? null;
+  return subjects.find((s) => s.slug.toLowerCase() === decodeURIComponent(slug).toLowerCase()) ?? null;
 }

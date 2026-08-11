@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Copy, Download, MessageCircle, Printer, Search, Share2 } from "lucide-react";
 import { PageHero } from "@/components/sections/page-hero";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -58,9 +58,9 @@ export default async function FatwasPage({ searchParams }: { searchParams: Promi
                 )}
               </CardHeader>
               <CardContent>
-                <Button size="sm" asChild className="mt-2">
-                  <Link href={`/fatwas/${fatwa.slug}`}>Read More</Link>
-                </Button>
+                <Link href={`/fatwas/${fatwa.slug}`} className={buttonVariants({ size: "sm", className: "mt-2" })}>
+                  Read More
+                </Link>
               </CardContent>
             </Card>
           )) : <EmptyState />}

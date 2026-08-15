@@ -103,7 +103,7 @@ export function ContentEditorForm({
               name="title" 
               value={title} 
               onChange={(event) => setTitle(event.target.value)} 
-              placeholder={kind === "article" ? "ലേഖനത്തിന്റെ തലക്കെട്ട്" : "ഫത്വയുടെ തലക്കെട്ട്"} 
+              placeholder={kind === "article" ? "ലേഖനത്തിന്റെ തലക്കെട്ട്" : "ഫത്‌വയുടെ തലക്കെട്ട്"} 
               className="text-3xl font-bold h-auto py-3 leading-snug"
               required 
             />

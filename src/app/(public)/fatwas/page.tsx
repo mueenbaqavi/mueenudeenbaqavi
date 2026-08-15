@@ -22,7 +22,7 @@ export default async function FatwasPage({ searchParams }: { searchParams: Promi
     <>
       <PageHero title="ഫത്‌വകൾ" description="ചോദ്യം, മറുപടി, നമ്പർ, വിഭാഗം, ടാഗുകൾ, തീയതി, അറ്റാച്ച്മെന്റ്, PDF, പ്രിന്റ്, related fatwas എന്നിവയോടെ." />
       <section className="container py-12">
-        <div className="relative"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input className="pl-10" placeholder="ഫത്വ നമ്പർ, വിഷയം, വിഭാഗം തിരയുക" /></div>
+        <div className="relative"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input className="pl-10" placeholder="ഫത്‌വ നമ്പർ, വിഷയം, വിഭാഗം തിരയുക" /></div>
         
         <div className="mt-5 flex flex-wrap gap-2">
           <Link href="/fatwas">
@@ -66,7 +66,7 @@ export default async function FatwasPage({ searchParams }: { searchParams: Promi
           )) : <EmptyState />}
         </div>
       </section>
-      <Link className="fixed bottom-5 right-5 z-40" href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("അസ്സലാമു അലൈക്കും. എനിക്ക് ഒരു ഫത്വ ചോദിക്കാനുണ്ട്.")}`}><Button size="lg"><MessageCircle className="size-4" />Ask Fatwa</Button></Link>
+      <Link className="fixed bottom-5 right-5 z-40" href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("അസ്സലാമു അലൈക്കും. എനിക്ക്  ഒരു വിഷയത്തിൻ്റെ  മതവിധി അറിയാൻ താല്പര്യമുണ്ടായിരുന്നു. ചോദിക്കട്ടയോ?")}`}><Button size="lg"><MessageCircle className="size-4" />Ask Fatwa</Button></Link>
     </>
   );
 }

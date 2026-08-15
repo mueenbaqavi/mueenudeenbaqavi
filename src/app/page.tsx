@@ -35,10 +35,10 @@ export default async function Home() {
             <ReadMoreText text={scholar.summary} />
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/fatwas">
-                <Button size="lg"><Search className="size-4" />ഫത്‌വ തിരയുക</Button>
+                <Button size="lg"><Search className="size-4" />ഫത്‌വകൾ</Button>
               </Link>
-              <Link href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("അസ്സലാമു അലൈക്കും. ഒരു ഫത്വ ചോദിക്കാൻ ആഗ്രഹിക്കുന്നു.")}`}>
-                <Button size="lg" variant="outline"><MessageCircle className="size-4" />ഫത്‌വ ചോദിക്കുക</Button>
+              <Link href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("അസ്സലാമു അലൈക്കും. എനിക്ക്  ഒരു വിഷയത്തിൻ്റെ  മതവിധി അറിയാൻ താല്പര്യമുണ്ടായിരുന്നു. ചോദിക്കട്ടയോ?")}`}>
+                <Button size="lg" variant="outline"><MessageCircle className="size-4" />മതവിധി ചോദിക്കാം</Button>
               </Link>
             </div>
           </div>

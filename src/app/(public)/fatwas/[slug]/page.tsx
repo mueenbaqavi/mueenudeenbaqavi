@@ -107,7 +107,7 @@ export default async function FatwaDetailPage({ params }: PageProps) {
         </div>
         <RelatedList title="ബന്ധപ്പെട്ട ഫത്‌വകൾ" items={related} basePath="/fatwas" />
       </article>
-      <Link className="fixed bottom-5 right-5 z-40" href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("അസ്സലാമു അലൈക്കും. എനിക്ക് ഒരു ഫത്വ ചോദിക്കാനുണ്ട്.")}`}>
+      <Link className="fixed bottom-5 right-5 z-40" href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("അസ്സലാമു അലൈക്കും. എനിക്ക്  ഒരു വിഷയത്തിൻ്റെ  മതവിധി അറിയാൻ താല്പര്യമുണ്ടായിരുന്നു. ചോദിക്കട്ടയോ?")}`}>
         <Button size="lg"><MessageCircle className="size-4" />Ask Fatwa</Button>
       </Link>
     </>
